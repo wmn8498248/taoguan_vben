@@ -4,8 +4,7 @@
       <div class="flex justify-between items-center">
         <span class="flex-1">
           <a :href="GITHUB_URL" target="_blank">{{ name }}</a>
-          是一个基于Vue3.0、Vite、 Ant-Design-Vue 、TypeScript
-          的后台解决方案，目标是为中大型项目开发,提供现成的开箱解决方案及丰富的示例,原则上不会限制任何代码用于商用。
+          从事物联网科技、智能科技、信息科技、网络科技、电力科技领域内的技术开发、技术咨询、技术服务、技术转让，电力设备、智能设备、自动化设备、电子设备及产品、通讯设备、仪器仪表的销售，计算机系统集成，电力建设工程施工，电力设备的安装及维修，从事货物及技术的进出口业务。【依法须经批准的项目，经相关部门批准后方可开展经营活动】
         </span>
       </div>
     </template>

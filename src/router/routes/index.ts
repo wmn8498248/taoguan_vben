@@ -26,7 +26,7 @@ export const RootRoute: AppRouteRecordRaw = {
     title: 'Root',
   },
 };
-
+ 
 export const LoginRoute: AppRouteRecordRaw = {
   path: '/login',
   name: 'Login',
