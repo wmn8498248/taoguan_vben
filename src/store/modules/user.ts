@@ -91,8 +91,9 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
+        console.log(data,"_________123 ")
         const { token } = data;
-
+          
         // save token
         this.setToken(token);
         return this.afterLoginAction(goHome);
@@ -102,9 +103,10 @@ export const useUserStore = defineStore({
     },
     async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null;
-      // get user info
+      // 获取用户信息
       const userInfo = await this.getUserInfoAction();
-
+      
+      //加载路由
       const sessionTimeout = this.sessionTimeout;
       if (sessionTimeout) {
         this.setSessionTimeout(false);
@@ -134,7 +136,7 @@ export const useUserStore = defineStore({
         this.setRoleList([]);
       }
       this.setUserInfo(userInfo);
-      return userInfo;
+      return userInfo.user;
     },
     /**
      * @description: logout

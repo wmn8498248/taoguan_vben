@@ -84,8 +84,8 @@
   const rememberMe = ref(false);
 
   const formData = reactive({
-    account: 'vben',
-    password: '123456',
+    account: 'admin',
+    password: 'admin',
   });
 
   const { validForm } = useFormValid(formRef);
@@ -97,6 +97,7 @@
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
+
     try {
       loading.value = true;
       const userInfo = await userStore.login({
@@ -104,14 +105,19 @@
         username: data.account,
         mode: 'none', //不要默认的错误提示
       });
+
+
       if (userInfo) {
+        console.log(userInfo, "欢迎回来————")
         notification.success({
           message: t('sys.login.loginSuccessTitle'),
-          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.realName}`,
+          description: `${t('sys.login.loginSuccessDesc')}: ${userInfo.username}`,
           duration: 3,
         });
       }
     } catch (error) {
+      console.log(error, " 不要默认的错误提示__error")
+
       createErrorModal({
         title: t('sys.api.errorTip'),
         content: (error as unknown as Error).message || t('sys.api.networkExceptionMsg'),

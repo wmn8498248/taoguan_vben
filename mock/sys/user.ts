@@ -43,7 +43,7 @@ const fakeCodeList: any = {
 
   '2': ['2000', '4000', '6000'],
 };
-export default [
+export default [ 
   // mock user login
   {
     url: '/basic-api/login',
@@ -55,7 +55,7 @@ export default [
         (item) => item.username === username && password === item.password,
       );
       if (!checkUser) {
-        return resultError('Incorrect account or password！');
+        return resultError('账户或密码存在错误！');
       }
       const { userId, username: _username, token, realName, desc, roles } = checkUser;
       return resultSuccess({
