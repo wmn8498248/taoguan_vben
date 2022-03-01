@@ -78,8 +78,9 @@ export function useHeaderSetting() {
     return unref(getShowBread) || unref(getShowHeaderTrigger);
   });
 
-  // Set header configuration
+  // 设置标头配置
   function setHeaderSetting(headerSetting: Partial<HeaderSetting>) {
+    console.log(headerSetting, "设置标头配置__")
     appStore.setProjectConfig({ headerSetting });
   }
   return {

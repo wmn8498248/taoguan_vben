@@ -24,7 +24,7 @@ export enum TriggerEnum {
 
 export type Mode = 'vertical' | 'vertical-right' | 'horizontal' | 'inline';
 
-// menu mode
+// 菜单模式
 export enum MenuModeEnum {
   VERTICAL = 'vertical',
   HORIZONTAL = 'horizontal',

@@ -80,58 +80,58 @@ export interface TransitionSetting {
 }
 
 export interface ProjectConfig {
-  // Storage location of permission related information
+  // 权限相关信息的存储位置
   permissionCacheType: CacheTypeEnum;
-  // Whether to show the configuration button
+  // 是否显示配置按钮
   showSettingButton: boolean;
-  // Whether to show the theme switch button
+  // 是否显示主题切换按钮
   showDarkModeToggle: boolean;
-  // Configure where the button is displayed
+  // 配置按钮的显示位置
   settingButtonPosition: SettingButtonPositionEnum;
-  // Permission mode
+  // 权限模式
   permissionMode: PermissionModeEnum;
-  // Session timeout processing
+  // 会话超时处理
   sessionTimeoutProcessing: SessionTimeoutProcessingEnum;
-  // Website gray mode, open for possible mourning dates
+  // 网站灰色模式，打开可能的哀悼日期
   grayMode: boolean;
-  // Whether to turn on the color weak mode
+  // 是否开启色弱模式
   colorWeak: boolean;
-  // Theme color
+  //主题色
   themeColor: string;
 
-  // The main interface is displayed in full screen, the menu is not displayed, and the top
+  // 主界面全屏显示，菜单不显示，顶部
   fullContent: boolean;
-  // content width
+  // 内容宽度
   contentMode: ContentEnum;
-  // Whether to display the logo
+  // 是否显示标志
   showLogo: boolean;
-  // Whether to show the global footer
+  // 是否显示全局页脚
   showFooter: boolean;
-  // menuType: MenuTypeEnum;
+  // 菜单类型：菜单类型枚举
   headerSetting: HeaderSetting;
-  // menuSetting
+  // 菜单设置
   menuSetting: MenuSetting;
-  // Multi-tab settings
+  // 多标签设置
   multiTabsSetting: MultiTabsSetting;
-  // Animation configuration
+  // 动画配置
   transitionSetting: TransitionSetting;
-  // pageLayout whether to enable keep-alive
+  // pageLayout是否开启keep-alive
   openKeepAlive: boolean;
-  // Lock screen time
+  // 锁屏时间
   lockTime: number;
-  // Show breadcrumbs
+  // 显示面包屑
   showBreadCrumb: boolean;
-  // Show breadcrumb icon
+  // 显示面包屑图标
   showBreadCrumbIcon: boolean;
-  // Use error-handler-plugin
+  // 使用错误处理程序插件
   useErrorHandle: boolean;
-  // Whether to open back to top
+  // 是否打开回到顶部
   useOpenBackTop: boolean;
-  // Is it possible to embed iframe pages
+  // 是否可以嵌入 iframe 页面
   canEmbedIFramePage: boolean;
-  // Whether to delete unclosed messages and notify when switching the interface
+  // 切换界面时是否删除未关闭的消息并通知
   closeMessageOnSwitch: boolean;
-  // Whether to cancel the http request that has been sent but not responded when switching the interface.
+  // 切换接口时是否取消已经发送但没有响应的http请求。
   removeAllHttpPending: boolean;
 }
 

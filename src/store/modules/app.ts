@@ -32,7 +32,7 @@ export const useAppStore = defineStore({
   state: (): AppState => ({
     darkMode: undefined,
     pageLoading: false,
-    projectConfig: Persistent.getLocal(PROJ_CFG_KEY),
+    projectConfig: Persistent.getLocal(PROJ_CFG_KEY), //Persistent.getLocal(PROJ_CFG_KEY)
     beforeMiniInfo: {},
   }),
   getters: {
@@ -80,6 +80,8 @@ export const useAppStore = defineStore({
 
     setProjectConfig(config: DeepPartial<ProjectConfig>): void {
       this.projectConfig = deepMerge(this.projectConfig || {}, config);
+      console.log(this.projectConfig, '全屏切换');
+
       Persistent.setLocal(PROJ_CFG_KEY, this.projectConfig);
     },
 
