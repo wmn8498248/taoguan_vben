@@ -80,8 +80,6 @@ export const useAppStore = defineStore({
 
     setProjectConfig(config: DeepPartial<ProjectConfig>): void {
       this.projectConfig = deepMerge(this.projectConfig || {}, config);
-      console.log(this.projectConfig, '全屏切换');
-
       Persistent.setLocal(PROJ_CFG_KEY, this.projectConfig);
     },
 
