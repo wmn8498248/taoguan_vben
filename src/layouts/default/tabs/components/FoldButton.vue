@@ -32,7 +32,6 @@
           show: isUnFold,
           hidden: !isUnFold,
         });
-        console.log(isUnFold,"isUnFold___________")
         setHeaderSetting({ show: isUnFold });
         triggerWindowResize();
       }

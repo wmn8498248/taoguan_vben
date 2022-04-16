@@ -69,6 +69,7 @@
     "vue-json-pretty": "^1.8.2",
     "vue-router": "^4.0.12",
     "vue-types": "^4.1.1",
+    "vue3-seamless-scroll": "^1.1.5",
     "xlsx": "^0.17.5"
   },
   "devDependencies": {

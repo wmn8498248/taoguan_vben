@@ -68,6 +68,9 @@ const deptList = (() => {
 
 const menuList = (() => {
   const result: any[] = [];
+
+  console.log("menuList______________1234")
+
   for (let index = 0; index < 3; index++) {
     result.push({
       id: `${index}`,

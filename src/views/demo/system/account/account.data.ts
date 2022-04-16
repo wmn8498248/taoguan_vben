@@ -4,33 +4,29 @@ import { FormSchema } from '/@/components/Table';
 
 export const columns: BasicColumn[] = [
   {
-    title: '用户名',
-    dataIndex: 'account',
-    width: 120,
+    title: '用户ID',
+    dataIndex: 'userId',
   },
   {
-    title: '昵称',
-    dataIndex: 'nickname',
-    width: 120,
+    title: '用户名',
+    dataIndex: 'username',
   },
   {
     title: '邮箱',
     dataIndex: 'email',
-    width: 120,
+  },
+  {
+    title: '手机号',
+    dataIndex: 'mobile',
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
   },
   {
     title: '创建时间',
     dataIndex: 'createTime',
-    width: 180,
-  },
-  {
-    title: '角色',
-    dataIndex: 'role',
-    width: 200,
-  },
-  {
-    title: '备注',
-    dataIndex: 'remark',
+    // width: 120,
   },
 ];
 
@@ -42,8 +38,8 @@ export const searchFormSchema: FormSchema[] = [
     colProps: { span: 8 },
   },
   {
-    field: 'nickname',
-    label: '昵称',
+    field: 'username',
+    label: '用户名',
     component: 'Input',
     colProps: { span: 8 },
   },

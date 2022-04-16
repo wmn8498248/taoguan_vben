@@ -3,7 +3,23 @@
     contentFullHeight
     title="基础组件"
     content=" 基础组件依赖于ant-design-vue,组件库已有的基础组件,项目中不会再次进行demo展示（二次封装组件除外）"
-  >
+  >   
+    <a-carousel arrows>
+          <template #prevArrow>
+            <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
+              <left-circle-outlined />
+            </div>
+          </template>
+          <template #nextArrow>
+            <div class="custom-slick-arrow" style="right: 10px">
+              <right-circle-outlined />
+            </div>
+          </template>
+          <div style="width: 100px; height: 100px;"><h3>1</h3></div>
+          <div style="width: 100px; height: 100px;"><h3>2</h3></div>
+          <div style="width: 100px; height: 100px;"><h3>3</h3></div>
+          <div style="width: 100px; height: 100px;"><h3>4</h3></div>
+      </a-carousel>
     <a-row :gutter="[20, 20]">
       <a-col :xl="10" :lg="24">
         <a-card title="BasicButton Color">
@@ -105,8 +121,8 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Card, Row, Col } from 'ant-design-vue';
+  import { Card, Row, Col, Carousel} from 'ant-design-vue';
   export default defineComponent({
-    components: { PageWrapper, ACard: Card, ARow: Row, ACol: Col },
+    components: { PageWrapper, ACard: Card, ARow: Row, ACol: Col, ACarousel: Carousel },
   });
 </script>

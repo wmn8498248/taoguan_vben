@@ -29,7 +29,7 @@ export enum SessionTimeoutProcessingEnum {
  * 权限模式
  */
 export enum PermissionModeEnum {
-  // role
+  // 角色
   ROLE = 'ROLE',
   // black
   BACK = 'BACK',

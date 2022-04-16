@@ -44,7 +44,7 @@
       const [registerModal, { openModal }] = useModal();
       const [registerTable, { reload }] = useTable({
         title: '部门列表',
-        api: getDeptList,
+        api: getDeptList, 
         columns,
         formConfig: {
           labelWidth: 120,

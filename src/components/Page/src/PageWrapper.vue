@@ -168,9 +168,9 @@
   .@{prefix-cls} {
     position: relative;
 
-    .@{prefix-cls}-content {
-      margin: 16px;
-    }
+    // .@{prefix-cls}-content {
+    //   margin: 16px;
+    // }
 
     .ant-page-header {
       &:empty {

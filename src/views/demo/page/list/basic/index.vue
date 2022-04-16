@@ -12,7 +12,7 @@
         </a-col>
         <a-col :span="8" :class="`${prefixCls}__top-col`">
           <div>本周完成任务数</div>
-          <p>24个任务</p>
+          <p>24个任务</p> 
         </a-col>
       </a-row>
     </div>
@@ -52,7 +52,7 @@
 </template>
 <script lang="ts">
   import { Progress, Row, Col } from 'ant-design-vue';
-  import { defineComponent } from 'vue';
+  import { defineComponent } from 'vue'; 
   import Icon from '/@/components/Icon/index';
   import { cardList } from './data';
   import { PageWrapper } from '/@/components/Page';

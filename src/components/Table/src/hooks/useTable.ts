@@ -55,6 +55,7 @@ export function useTable(tableProps?: Props): [
   }
 
   function getTableInstance(): TableActionType {
+    console.log(getTableInstance, "getTableInstance____")
     const table = unref(tableRef);
     if (!table) {
       error(
@@ -68,6 +69,7 @@ export function useTable(tableProps?: Props): [
     getForm: () => FormActionType;
   } = {
     reload: async (opt?: FetchParams) => {
+      console.log(111111)
       return await getTableInstance().reload(opt);
     },
     setProps: (props: Partial<BasicTableProps>) => {

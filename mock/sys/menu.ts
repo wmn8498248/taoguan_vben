@@ -18,7 +18,7 @@ const dashboardRoute = {
       path: 'analysis',
       name: 'Analysis',
       component: '/dashboard/analysis/index',
-      meta: {
+      meta: { 
         hideMenu: true,
         hideBreadcrumb: true,
         title: 'routes.dashboard.analysis',
@@ -251,6 +251,7 @@ export default [
       }
       const id = checkUser.userId;
       let menu: Object[];
+      console.log(id, "response____id")
       switch (id) {
         case '1':
           dashboardRoute.redirect = dashboardRoute.path + '/' + dashboardRoute.children[0].path;

@@ -1,10 +1,11 @@
 <template>
   <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
-    <DeptTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
-    <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
+    <BasicTable @register="registerTable" class="md:w-full" :searchInfo="searchInfo">
       <template #toolbar>
-        <a-button type="primary" @click="handleCreate">新增账号</a-button>
+        <a-button type="primary" @click="handleCreate">123新增账号{}</a-button>
       </template>
+
+
       <template #action="{ record }">
         <TableAction
           :actions="[
@@ -31,6 +32,7 @@
         />
       </template>
     </BasicTable>
+    
     <AccountModal @register="registerModal" @success="handleSuccess" />
   </PageWrapper>
 </template>
@@ -40,7 +42,6 @@
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { getAccountList } from '/@/api/demo/system';
   import { PageWrapper } from '/@/components/Page';
-  import DeptTree from './DeptTree.vue';
 
   import { useModal } from '/@/components/Modal';
   import AccountModal from './AccountModal.vue';
@@ -50,11 +51,16 @@
 
   export default defineComponent({
     name: 'AccountManagement',
-    components: { BasicTable, PageWrapper, DeptTree, AccountModal, TableAction },
+    components: { BasicTable, PageWrapper, AccountModal, TableAction },
     setup() {
       const go = useGo();
       const [registerModal, { openModal }] = useModal();
-      const searchInfo = reactive<Recordable>({});
+      const searchInfo = reactive<Recordable>({
+        _search: false,
+        limit: 10,
+        order: "asc"
+      });
+
       const [registerTable, { reload, updateTableDataRecord }] = useTable({
         title: '账号列表',
         api: getAccountList,
