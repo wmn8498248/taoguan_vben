@@ -46,7 +46,7 @@
       CropperAvatar,
     },
     setup() {
-      const { createMessage } = useMessage();
+      const { createMessage } = useMessage(); 
       const userStore = useUserStore();
 
       const [register, { setFieldsValue }] = useForm({
@@ -54,7 +54,7 @@
         schemas: baseSetschemas,
         showActionButtonGroup: false,
       });
-
+ 
       onMounted(async () => {
         const data = await accountInfoApi();
         setFieldsValue(data);

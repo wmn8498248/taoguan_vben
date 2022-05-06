@@ -36,6 +36,7 @@
     position: relative;
     flex: 1 1 auto;
     min-height: 0;
+    height:100%;
     // background-color: #000d27;
     &.fixed {
       width: 1200px;

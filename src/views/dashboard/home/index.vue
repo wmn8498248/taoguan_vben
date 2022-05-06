@@ -38,10 +38,11 @@
   background-image: url("../../../assets/images/yg-bg.jpg");
   background-size: 100% 100%;
   background-position: center top;
-  height: 100%;
+  min-height: 100vh;
   background-repeat: no-repeat;
   background-attachment: fixed;
   &-content{
+    margin-top:40px;
     height: calc(100% - 85px);
     align-items: center;
   }

@@ -14,7 +14,8 @@ const page: AppRouteModule = {
   meta: {
     orderNo: 20,
     icon: 'ion:aperture-outline',
-    title: t('routes.demo.page.page'),
+    // title: t('routes.demo.page.page'),
+    title: "套管页面设计",
   },
   children: [
     // =============================form start=============================
@@ -24,7 +25,7 @@ const page: AppRouteModule = {
       redirect: '/page-demo/form/basic',
       component: getParentLayout('FormPage'),
       meta: {
-        title: t('routes.demo.page.form'),
+        title: "设备业务参数管理示例",
       },
       children: [
         {
@@ -61,7 +62,7 @@ const page: AppRouteModule = {
       component: getParentLayout('DescPage'),
       redirect: '/page-demo/desc/basic',
       meta: {
-        title: t('routes.demo.page.desc'),
+        title: "突变量列表页面示例",
       },
       children: [
         {
@@ -92,7 +93,7 @@ const page: AppRouteModule = {
       component: getParentLayout('ResultPage'),
 
       meta: {
-        title: t('routes.demo.page.result'),
+        title: "录波相关",
       },
       children: [
         {

@@ -27,7 +27,7 @@
     readonly: { type: Boolean },
     autoFormat: { type: Boolean, default: true },
   });
-
+ 
   const emit = defineEmits(['change', 'update:value', 'format-error']);
 
   const getValue = computed(() => {

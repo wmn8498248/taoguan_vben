@@ -1,101 +1,129 @@
 <template>
-  <div class="md:flex flex-wrap box-lists">
-    <div  class="box-item" v-for="(item, index) in growCardList" :key="item.title">
+  <div class="md:flex flex-wrap box-lists" v-if="deviceList.length > 0">
+    <div
+      :class="itemAction == index ? 'box-item box-item-action' : 'box-item'"
+      v-for="(item, index) in deviceList"
+      :key="index"
+      @click="itemListClick(item, index)"
+    >
       <Card
         size="small"
         :bordered="false"
-        :headStyle="{paddingTop: '8px', color: '#16ffff'}"
-        :title="item.title + index"
+        :headStyle="{ paddingTop: '8px', color: '#16ffff' }"
+        :title="item.deviceName"
       >
-        <!-- <template #extra>
-          <Tag :color="item.color">{{ item.action }}</Tag>
-        </template> -->
-       
         <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">电流</Tag>
-          <CountTo prefix="(A)" :startVal="1" :endVal="item.total" />
+          <Tag color="#108ee9">相对介损</Tag>
+          <span>{{ item.phase }}</span>
         </div>
         <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">相电压</Tag>
-          <CountTo prefix="(V)" :startVal="1" :endVal="item.total" />
+          <Tag color="#108ee9">相对电容量</Tag>
+          <span>{{ item.relativeCapacitance }}</span>
         </div>
         <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">电容</Tag>
-          <CountTo prefix="(C)" :startVal="1" :endVal="item.total" />
+          <Tag color="#108ee9">绝对介损</Tag>
+          <span>{{ item.dielectricLoss }}</span>
         </div>
         <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">介损</Tag>
-          <CountTo prefix="(W)" :startVal="1" :endVal="item.total" />
+          <Tag color="#108ee9">电容量(pF)</Tag>
+          <span>{{ item.cap }}</span>
+        </div>
+        <div class="p-1.5 px-4 flex justify-between">
+          <Tag color="#108ee9">电压</Tag>
+          <span>{{ item.volt }}</span>
+        </div>
+        <div class="p-1.5 px-4 flex justify-between">
+          <Tag color="#108ee9">电流(mA)</Tag>
+          <span>{{ item.currentRms }}</span>
         </div>
       </Card>
     </div>
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref, computed } from 'vue';
 
   import { CountTo } from '/@/components/CountTo/index';
   import { Tag, Card } from 'ant-design-vue';
-  import { growCardList } from '../data';
+
+  const props = {
+    deviceList: Object,
+  };
 
   export default defineComponent({
-    components: { CountTo, Tag, Card, },
-    setup(props) {
+    components: { CountTo, Tag, Card },
+    emits: ['my-click'],
+    props,
+    setup(props, contex) {
+      let itemAction = ref(0);
+      const deviceList = computed(() => props.deviceList);
+      console.log(props.deviceList, ' props.deviceList_______');
 
-      const loading = props
+      async function itemListClick(item: any, index) {
+        contex.emit('my-click', index);
+        itemAction.value = index;
+      }
 
-      return{ growCardList, loading}
-      
-    }
+      return { deviceList, itemAction, itemListClick };
+    },
   });
 </script>
 <style lang="less" scoped>
-.box-lists{
-  // ::v-deep(.ant-card-head-title) {
-  //   color: #fff;
-  // }
-  .ant-card{
-    background-image: url(/src/assets/images/box-bg.png);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-color: transparent;
-    color: #c9d1d9;
-  }
-  .box-item{
-    flex: 1;
-    margin: 0 5px 5px 0; // 间隙为5px
-    // background-color: #999;
-    width: calc((100% - 35px) / 8);  // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
-    min-width: calc((100% - 35px) / 8); // 加入这两个后每个item的宽度就生效了
-    max-width: calc((100% - 35px) / 8); // 加入这两个后每个item的宽度就生效了
-  }
-  @media screen and (min-width: 1366px) {
-    .box-item:nth-child(8n) { // 去除第3n个的margin-right
-      margin-right: 0;
+  .box-lists {
+    .ant-card {
+      background-image: url(/src/assets/images/box-bg.png);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-color: transparent;
+      color: #c9d1d9;
     }
-  }
- 
-  @media screen and (max-width: 1366px) {
-    .box-item{
+    .box-item {
       flex: 1;
       margin: 0 5px 5px 0; // 间隙为5px
-      width: calc((100% - 25px) / 6);  // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
-      min-width: calc((100% - 25px) / 6); // 加入这两个后每个item的宽度就生效了
-      max-width: calc((100% - 25px) / 6); // 加入这两个后每个item的宽度就生效了
+      // background-color: #999;
+      width: calc(
+        (100% - 35px) / 8
+      ); // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
+      min-width: calc((100% - 35px) / 8); // 加入这两个后每个item的宽度就生效了
+      max-width: calc((100% - 35px) / 8); // 加入这两个后每个item的宽度就生效了
+      cursor: pointer;
     }
-  .box-item:nth-child(6n) { // 去除第3n个的margin-right
-      margin-right: 0;
+    .box-item:hover {
+      background-color: #000;
     }
-  }
-  @media screen and (max-width: 750px) {
-    .box-item{
-      flex: 1;
-      margin: 0 5px 5px 0; // 间隙为5px
-      width: 100%;  // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
-      min-width: 100%; // 加入这两个后每个item的宽度就生效了
-      max-width: 100%; // 加入这两个后每个item的宽度就生效了
+    .box-item-action {
+      background-color: #000;
     }
-  }
-}
+    @media screen and (min-width: 1366px) {
+      .box-item:nth-child(8n) {
+        // 去除第3n个的margin-right
+        margin-right: 0;
+      }
+    }
 
+    @media screen and (max-width: 1366px) {
+      .box-item {
+        flex: 1;
+        margin: 0 5px 5px 0; // 间隙为5px
+        width: calc(
+          (100% - 25px) / 6
+        ); // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
+        min-width: calc((100% - 25px) / 6); // 加入这两个后每个item的宽度就生效了
+        max-width: calc((100% - 25px) / 6); // 加入这两个后每个item的宽度就生效了
+      }
+      .box-item:nth-child(6n) {
+        // 去除第3n个的margin-right
+        margin-right: 0;
+      }
+    }
+    @media screen and (max-width: 750px) {
+      .box-item {
+        flex: 1;
+        margin: 0 5px 5px 0; // 间隙为5px
+        width: 100%; // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
+        min-width: 100%; // 加入这两个后每个item的宽度就生效了
+        max-width: 100%; // 加入这两个后每个item的宽度就生效了
+      }
+    }
+  }
 </style>

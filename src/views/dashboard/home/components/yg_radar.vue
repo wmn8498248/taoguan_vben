@@ -5,47 +5,53 @@
       <span>设备信息</span>
     </div>
     <div class="virtual-alarm-content">
-      <a-descriptions 
-        bordered 
-        :size="'small'" 
-        :column="{ xxl: 3, xl: 2, lg: 2, md: 2, sm: 1, xs: 1 }" 
-        :labelStyle="{ backgroundColor: '#3d51a3', borderColor: '#041554', color: '#fff'}">
+      <a-descriptions
+        bordered
+        :size="'small'"
+        :column="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 1, xs: 1 }"
+        :labelStyle="{ backgroundColor: '#3d51a3', borderColor: '#041554', color: '#fff' }"
+      >
         <!-- <template #extra>
           <a-button type="primary">Edit</a-button>
         </template> -->
-        <a-descriptions-item label="板子编号">b0a0</a-descriptions-item>
-        <a-descriptions-item label="三相">A</a-descriptions-item>
-        <a-descriptions-item label="位置">110kVⅡ母避雷器B相</a-descriptions-item>
-        <a-descriptions-item label="是否可用">可用</a-descriptions-item>
-        <a-descriptions-item label="系数K">20.00</a-descriptions-item>
-        <a-descriptions-item label="系数A">60.00</a-descriptions-item>
-        <a-descriptions-item label="备注">
-          Data disk type: MongoDB
-          <br />
-          Database version: 3.4
-          <br />
-          Package: dds.mongo.mid
-          <br />
-          Storage space: 10 GB
-          <br />
-          Replication factor: 3
-          <br />
-          Region: East China 1
-          <br />
-        </a-descriptions-item>
+        <a-descriptions-item label="名称">{{ deviceList.deviceName }}</a-descriptions-item>
+        <a-descriptions-item label="电路板">{{ deviceList.boardId }}</a-descriptions-item>
+        <a-descriptions-item label="电流(mA)">{{ deviceList.currentRms }}</a-descriptions-item>
+        <a-descriptions-item label="电压(kV)">{{ deviceList.volt }}</a-descriptions-item>
+        <a-descriptions-item label="相对介损">{{ deviceList.phase }}</a-descriptions-item>
+        <a-descriptions-item label="绝对介损">{{ deviceList.dielectricLoss }}</a-descriptions-item>
+        <a-descriptions-item label="电容量(pF)">{{ deviceList.cap }}</a-descriptions-item>
+        <a-descriptions-item label="相对电容量(%)">{{ deviceList.relativeCapacitance }}</a-descriptions-item>
+        <a-descriptions-item label="相位">{{ deviceList.bushingId }}</a-descriptions-item>
+        <!-- <a-descriptions-item label="备注">
+          {{ deviceList }}
+        </a-descriptions-item> -->
       </a-descriptions>
     </div>
   </div>
-
 </template>
 <script lang="ts">
   import { Icon } from '/@/components/Icon';
-  import { defineComponent } from 'vue';
+  import { defineComponent, computed } from 'vue';
   // import type { DescriptionsProps, Descriptions } from 'ant-design-vue';
-  import {  Card, Empty, Descriptions, Steps, Tabs } from 'ant-design-vue';
-
+  import { Card, Empty, Descriptions, Steps, Tabs } from 'ant-design-vue';
+  const props = {
+    deviceList: {
+      min: { type: Boolean, default: 0 }, //最小值
+      avg: { type: Boolean, default: 0 },
+      max: { type: Boolean, default: 0 },
+      name: String,
+      boardId: String,
+      lu: String, // 第几路
+      bushingId: String, //相位
+      alarmMax: null || String, //电流上限(mA)
+      alarmLoss: null || String, //相对介损上限
+      alarmMin: null || String, //电流下限(mA)
+      alarmCap: null || String, //相对电容量上限(%)
+    },
+  };
   export default defineComponent({
-    components: { 
+    components: {
       Icon,
       [Card.name]: Card,
       Empty,
@@ -56,12 +62,13 @@
       [Tabs.name]: Tabs,
       [Tabs.TabPane.name]: Tabs.TabPane,
     },
-    setup() {
-      return {
-      };
+    props,
+    setup(props) {
+      const deviceList = computed(() => props.deviceList);
+      console.log(deviceList)
+      return { deviceList };
     },
   });
-  
 </script>
 <style lang="less" scoped>
   .virtual-alarm {
@@ -71,20 +78,20 @@
       border: 1px solid #245cdf;
       box-shadow: 0 0 0px 3px #021145;
     }
-    &-title{
+    &-title {
       display: flex;
       line-height: 40px;
       padding-left: 20px;
       border-bottom: 1px solid #041554;
       align-items: center;
-      span{
+      span {
         padding-left: 10px;
       }
     }
-  
-    &-content{
+
+    &-content {
       border-top: 1px solid #2c67f1;
-      height: 322px;
+      min-height: 322px;
       overflow: auto;
       color: #fff !important;
       display: flex;
@@ -94,7 +101,7 @@
       ::v-deep(.ant-descriptions-bordered .ant-descriptions-view) {
         border: 1px solid #2c67f0;
       }
-       ::v-deep(.ant-descriptions-bordered .ant-descriptions-row) {
+      ::v-deep(.ant-descriptions-bordered .ant-descriptions-row) {
         border: 1px solid #1938bb;
       }
       ::v-deep(.ant-descriptions-bordered .ant-descriptions-item-content) {
@@ -104,4 +111,3 @@
     }
   }
 </style>
-

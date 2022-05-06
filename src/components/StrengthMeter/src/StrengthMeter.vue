@@ -24,7 +24,7 @@
   import { zxcvbn } from '@zxcvbn-ts/core';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { propTypes } from '/@/utils/propTypes';
-
+ 
   export default defineComponent({
     name: 'StrengthMeter',
     components: { InputPassword: Input.Password },

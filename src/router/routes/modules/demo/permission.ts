@@ -4,7 +4,7 @@ import { getParentLayout, LAYOUT } from '/@/router/constant';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { t } from '/@/hooks/web/useI18n';
 
-const permission: AppRouteModule = {
+const permission: AppRouteModule = { 
   path: '/permission',
   name: 'Permission',
   component: LAYOUT,
