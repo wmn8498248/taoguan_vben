@@ -19,7 +19,7 @@
   import VisitAnalysis from './VisitAnalysis.vue';
   import VisitAnalysisBar from './VisitAnalysisBar.vue';
 
-  const activeKey = ref('tab1');
+  const activeKey = ref('tab1'); 
 
   const tabListTitle = [
     {

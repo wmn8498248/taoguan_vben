@@ -11,7 +11,7 @@
         <Icon :icon="action.icon" :class="{ 'mr-1': !!action.label }" v-if="action.icon" />
         <template v-if="action.label">{{ action.label }}</template>
       </PopConfirmButton>
-      <Divider
+      <Divider 
         type="vertical"
         class="action-divider"
         v-if="divider && index < getActions.length - 1"

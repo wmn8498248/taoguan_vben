@@ -34,7 +34,7 @@
   import { Select, Input, Divider } from 'ant-design-vue';
   export default defineComponent({
     components: {
-      BasicForm,
+      BasicForm, 
       [Select.name]: Select,
       ASelectOption: Select.Option,
       [Input.name]: Input,

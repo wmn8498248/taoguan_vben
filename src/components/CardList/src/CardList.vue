@@ -142,8 +142,9 @@
     const { api, params } = props;
     if (api && isFunction(api)) {
       const res = await api({ ...params, page: page.value, pageSize: pageSize.value, ...p });
-      data.value = res.items;
-      total.value = res.total;
+      console.log(res,"res___________")
+      data.value = res.result.items;
+      total.value = res.result.total;
     }
   }
   //分页相关

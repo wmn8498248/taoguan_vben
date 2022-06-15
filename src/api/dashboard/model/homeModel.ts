@@ -1,15 +1,28 @@
 export interface alarmPages {
-  pageNum: number;
-  pageSize: number;
+  page: number;
+  limit: number;
 }
 export interface homeParams {
-  boardId: string;
-  bushingId: string;
+  boardId?: string;
+  bushingId?: string;
+  deviceUniqueId?: string;
 }
 export interface homeParamsTime {
-  boardId: string;
-  bushingId: string;
-  startTime: string;
-  endTime: string;
+  deviceUniqueId?: string;
+  boardId?: string;
+  bushingId?: string;
+  startTime?: string;
+  endTime?: string;
 }
 
+export interface getHomeModel<> {
+  code: number;
+  msg?: string;
+  deviceList?: any;
+  historyList?: any;
+  realTimeList?: any;
+  showFields?: any;
+  todayMv?: any;
+  page?: any;
+  list?: any;
+}

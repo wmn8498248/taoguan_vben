@@ -126,9 +126,9 @@ export interface FormProps {
 export interface FormSchema {
   // Field name
   field: string;
-  // Event name triggered by internal value change, default change
+  // 内部值变化触发的事件名称，默认变化
   changeEvent?: string;
-  // Variable name bound to v-model Default value
+  // 绑定到 v-model 默认值的变量名
   valueField?: string;
   // Label name
   label: string | VNode;
@@ -183,10 +183,10 @@ export interface FormSchema {
 
   show?: boolean | ((renderCallbackParams: RenderCallbackParams) => boolean);
 
-  // Render the content in the form-item tag
+  // 渲染表单项标签中的内容
   render?: (renderCallbackParams: RenderCallbackParams) => VNode | VNode[] | string;
 
-  // Rendering col content requires outer wrapper form-item
+  // 渲染 col 内容需要外包装表单项
   renderColContent?: (renderCallbackParams: RenderCallbackParams) => VNode | VNode[] | string;
 
   renderComponentContent?:

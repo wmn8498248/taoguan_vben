@@ -1,13 +1,13 @@
 <template>
-  <PageWrapper title="关于">
-    <template #headerContent>
+  <PageWrapper title="项目信息">
+    <!-- <template #headerContent>
       <div class="flex justify-between items-center">
         <span class="flex-1">
-          <a :href="GITHUB_URL" target="_blank">{{ name }}</a>
-          从事物联网科技、智能科技、信息科技、网络科技、电力科技领域内的技术开发、技术咨询、技术服务、技术转让，电力设备、智能设备、自动化设备、电子设备及产品、通讯设备、仪器仪表的销售，计算机系统集成，电力建设工程施工，电力设备的安装及维修，从事货物及技术的进出口业务。【依法须经批准的项目，经相关部门批准后方可开展经营活动】
+          <span style="color: ;">【上海远观物联网科技有限公司】</span>
+          从事物联网科技、智能科技、信息科技、网络科技、电力科技领域内的技术开发、技术咨询、技术服务、技术转让，电力设备、智能设备、自动化设备、电子设备及产品、通讯设备、仪器仪表的销售，计算机系统集成，电力建设工程施工，电力设备的安装及维修，从事货物及技术的进出口业务。 【依法须经批准的项目，经相关部门批准后方可开展经营活动】
         </span>
       </div>
-    </template>
+    </template> -->
     <Description @register="infoRegister" class="enter-y" />
     <Description @register="register" class="my-4 enter-y" />
     <Description @register="registerDev" class="enter-y" />
@@ -20,18 +20,18 @@
   import { Description, DescItem, useDescription } from '/@/components/Description/index';
   import { GITHUB_URL, SITE_URL, DOC_URL } from '/@/settings/siteSetting';
 
+
   const { pkg, lastBuildTime } = __APP_INFO__;
 
-  const { dependencies, devDependencies, name, version } = pkg;
+  const { dependencies, devDependencies, version } = pkg;
 
   const schema: DescItem[] = [];
   const devSchema: DescItem[] = [];
 
   const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
-  const commonLinkRender = (text: string) => (href) => h('a', { href, target: '_blank' }, text);
-
+  // const commonLinkRender = (text: string) => (href) => h('a', { href, target: '_blank' }, text); // 编辑框框
   const infoSchema: DescItem[] = [
-    {
+    { 
       label: '版本',
       field: 'version',
       render: commonTagRender('blue'),
@@ -41,21 +41,21 @@
       field: 'lastBuildTime',
       render: commonTagRender('blue'),
     },
-    {
-      label: '文档地址',
-      field: 'doc',
-      render: commonLinkRender('文档地址'),
-    },
-    {
-      label: '预览地址',
-      field: 'preview',
-      render: commonLinkRender('预览地址'),
-    },
-    {
-      label: 'Github',
-      field: 'github',
-      render: commonLinkRender('Github'),
-    },
+    // {
+    //   label: '文档地址',
+    //   field: 'doc',
+    //   render: commonLinkRender('文档地址'),
+    // },
+    // {
+    //   label: '预览地址',
+    //   field: 'preview',
+    //   render: commonLinkRender('预览地址'),
+    // },
+    // {
+    //   label: 'Github',
+    //   field: 'github',
+    //   render: commonLinkRender('Github'),
+    // },
   ];
 
   const infoData = {
@@ -65,6 +65,7 @@
     preview: SITE_URL,
     github: GITHUB_URL,
   };
+
 
   Object.keys(dependencies).forEach((key) => {
     schema.push({ field: key, label: key });
@@ -89,7 +90,7 @@
   });
 
   const [infoRegister] = useDescription({
-    title: '项目信息',
+    title: '基本信息',
     data: infoData,
     schema: infoSchema,
     column: 2,

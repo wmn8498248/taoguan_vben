@@ -4,7 +4,7 @@ import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userMod
 import { ErrorMessageMode } from '/#/axios';
 
 enum Api {
-  Login = '/sys/login',
+  Login = '/token/login',
   Logout = '/sys/logout',
   GetUserInfo = '/sys/user/info',
   GetPermCode = '/getPermCode',
@@ -13,6 +13,7 @@ enum Api {
 /**
  * @description: user login api
  */
+
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {
   return defHttp.post<LoginResultModel>(
     {
@@ -41,5 +42,5 @@ export function getPermCode() {
 }
 
 export function doLogout() {
-  return defHttp.post({ url: Api.Logout });
+  return defHttp.get({ url: Api.Logout });
 }

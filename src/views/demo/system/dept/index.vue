@@ -23,7 +23,7 @@
         />
       </template>
     </BasicTable>
-    <DeptModal @register="registerModal" @success="handleSuccess" />
+    <DeptModal @register="registerModal" @success="handleSuccess" /> 
   </div>
 </template>
 <script lang="ts">
@@ -71,7 +71,7 @@
           isUpdate: false,
         });
       }
-
+ 
       function handleEdit(record: Recordable) {
         openModal(true, {
           record,

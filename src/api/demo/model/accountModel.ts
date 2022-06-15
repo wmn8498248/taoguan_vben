@@ -5,3 +5,4 @@ export interface GetAccountInfoModel {
   phone: string;
   address: string;
 }
+ 

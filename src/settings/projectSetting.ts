@@ -62,15 +62,15 @@ const setting: ProjectConfig = {
     // 是否显示顶部
     show: true,
     // 主题
-    theme: ThemeEnum.LIGHT,
+    theme: ThemeEnum.DARK,
     // 是否开启锁屏功能
     useLockPage: true,
     // 是否显示全屏按钮
     showFullScreen: true,
     // 是否显示文档按钮
-    showDoc: true,
+    showDoc: false,
     // 是否显示通知按钮
-    showNotice: true,
+    showNotice: false,
     // 是否显示菜单搜索
     showSearch: true,
   },
@@ -78,7 +78,7 @@ const setting: ProjectConfig = {
   // 菜单配置
   menuSetting: {
     // 侧边栏菜单背景颜色
-    bgColor: SIDE_BAR_BG_COLOR_LIST[0],
+    bgColor: SIDE_BAR_BG_COLOR_LIST[9],
     //  是否修复左侧菜单
     fixed: true,
     // 菜单折叠
@@ -95,9 +95,9 @@ const setting: ProjectConfig = {
     // 菜单宽度
     menuWidth: 210,
     // 菜单模式
-    mode: MenuModeEnum.INLINE,
+    mode: MenuModeEnum.HORIZONTAL,
     // 菜单类型
-    type: MenuTypeEnum.SIDEBAR,
+    type: MenuTypeEnum.TOP_MENU,
     // 菜单主题
     theme: ThemeEnum.DARK,
     // 拆分菜单

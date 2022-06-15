@@ -1,19 +1,29 @@
 <template>
+  <!-- content=" 表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。" -->
+
   <PageWrapper
     title="基础表单"
     contentBackground
     content=" 表单页用于向用户收集或验证信息，基础表单常见于数据项较少的表单场景。"
     contentClass="p-4"
   >
-    <BasicForm @register="register" />
+    <BasicForm @register="register" @submit="customSubmitFunc" />
   </PageWrapper>
 </template>
 <script lang="ts">
   import { BasicForm, useForm } from '/@/components/Form';
-  import { defineComponent } from 'vue';
+  import { defineComponent, onMounted } from 'vue'; 
   import { schemas } from './data';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { PageWrapper } from '/@/components/Page';
+
+  import {
+    deviceBusinessList,
+    deviceBusinessSave,
+    deviceBusinessInfo,
+    deviceBusinessUpdate,
+    deviceBusinessDelete,
+  } from '/@/api/device/manage';
 
   export default defineComponent({
     name: 'FormBasicPage',
@@ -25,27 +35,36 @@
           span: 8,
         },
         wrapperCol: {
-          span: 10,
+          span: 15,
         },
         schemas: schemas,
         actionColOptions: {
           offset: 8,
-          span: 12,
+          span: 23,
         },
         submitButtonOptions: {
           text: '提交',
         },
-        submitFunc: customSubmitFunc,
+        // submitFunc: customSubmitFunc,
       });
 
-      async function customSubmitFunc() {
+      async function getBusinessList() {
+        const { page } = await deviceBusinessList();
+        console.log(page);
+      }
+      async function customSubmitFunc(values: any) {
         try {
+          // 验证
           await validate();
+
           setProps({
             submitButtonOptions: {
               loading: true,
             },
           });
+
+          console.log('click search,values:' + values);
+
           setTimeout(() => {
             setProps({
               submitButtonOptions: {
@@ -56,8 +75,10 @@
           }, 2000);
         } catch (error) {}
       }
-
-      return { register };
+      onMounted(async () => {
+        getBusinessList();
+      });
+      return { register, customSubmitFunc };
     },
   });
 </script>

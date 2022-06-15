@@ -74,6 +74,10 @@
   for (let i = 1; i < 10; i++) options.value.push({ label: '选项' + i, value: `${i}` });
 
   const optionsA = computed(() => {
+    console.log(cloneDeep(unref(options)).map((op) => {
+      op.disabled = unref(valueSelectA).indexOf(op.value) !== -1;
+      return op;
+    }),"______________")
     return cloneDeep(unref(options)).map((op) => {
       op.disabled = unref(valueSelectB).indexOf(op.value) !== -1;
       return op;

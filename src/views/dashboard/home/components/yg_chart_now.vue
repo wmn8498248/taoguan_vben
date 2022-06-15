@@ -13,44 +13,30 @@
   import { basicProps } from './props';
 </script>
 <script lang="ts" setup>
-  import { onMounted, ref, Ref, computed, watch } from 'vue';
+  import { onMounted, ref, Ref, watch } from 'vue';
   import { useECharts } from '/@/hooks/web/useECharts';
   import { Icon } from '/@/components/Icon';
 
   let props = defineProps({
     ...basicProps,
+    timestamp: { type: Number, default: 0 },
     deviceName: { type: String, default: '设备名称' },
-    historyList: {
-      fftId: String, //时间；横轴
-      currentRms: Number, //电流(mA)；纵轴
-      phase: Number, //相对介损
-      relativeCapacitance: Number, //相对电容量；单位*100%电容量；
-      padding: String, //无关
-      timeScale: String, //无关
-      pressure: String, //无关
-      bushingId: String, //相位
-    },
+    isBoxVolt: { type: Boolean, default: true }, //电流/电压，isBoxVolt为true，表示电压(kV)，否则是电流(mA)
+    historyList: { type: null, default: [] },
   });
   const chartRef = ref<HTMLDivElement | null>(null);
   const { setOptions } = useECharts(chartRef as Ref<HTMLDivElement>);
 
-  let deviceName = computed(() => props.deviceName);
-
-  let historyList = computed(() => props.historyList);
-
   watch(
     () => props.deviceName,
     () => {
-      if (props.historyList.deviceName) {
-        return;
-      }
       setOptions({
         title: {
-          text: deviceName,
+          text: props.deviceName,
           left: 'center',
           top: 'top',
           textStyle: {
-            fontSize: 18,
+            fontSize: 14,
             color: '#55acee',
             fontWeight: 'normal',
             lineHeight: 30,
@@ -84,7 +70,7 @@
           },
         },
         yAxis: {
-          name: '电流（mA）',
+          name: props.isBoxVolt ? '电压(kV)' : '电流（mA）',
           nameTextStyle: {
             color: '#3BDFFF',
           },
@@ -92,12 +78,6 @@
           splitLine: {
             lineStyle: {
               color: 'rgba(20, 225, 250, 0.2)',
-            },
-          },
-          axisLabel: {
-            //x轴文字的配置
-            textStyle: {
-              color: '#fff',
             },
           },
           axisLine: {
@@ -108,24 +88,74 @@
           },
         },
         grid: {
-          top: 52,
+          top: 60,
           left: 36,
           right: 40,
-          bottom: 30,
+          bottom: 50,
           containLabel: true,
           borderWidth: 0,
           borderColor: '#ccc',
         },
+        dataZoom: [
+          {
+            type: 'slider',
+            show: true,
+            xAxisIndex: [0],
+            start: 0,
+            end: 100,
+            height: 12,
+          },
+        ],
+        legend: {
+          data: [
+            props.isBoxVolt ? '电压(kV)' : '电流（mA）',
+            '相对电容量',
+            '相对介损',
+            '电容量',
+            '介损',
+          ],
+          textStyle: {
+            color: '#f1a89f',
+          },
+          top: 35,
+          right: 30, //可设定图例在左、右、居中
+          icon: 'line',
+        },
         series: [
           {
             data: props.historyList.map((ele) => {
-              return ele.currentRms;
+              return ele.monitorValue;
             }),
             type: 'line',
-            name: '电流（mA）',
-            itemStyle: {
-              color: '#5ab1ef',
-            },
+            name: props.isBoxVolt ? '电压(kV)' : '电流（mA）',
+          },
+          {
+            data: props.historyList.map((ele: { relativelyCap: any }) => {
+              return ele.relativelyCap;
+            }),
+            type: 'line',
+            name: '相对电容量',
+          },
+          {
+            data: props.historyList.map((ele: { relativelyLoss: any }) => {
+              return ele.relativelyLoss;
+            }),
+            type: 'line',
+            name: '相对介损',
+          },
+          {
+            data: props.historyList.map((ele: { cap: any }) => {
+              return ele.cap;
+            }),
+            type: 'line',
+            name: '电容量',
+          },
+          {
+            data: props.historyList.map((ele: { loss: any }) => {
+              return ele.loss;
+            }),
+            type: 'line',
+            name: '介损',
           },
         ],
       });
@@ -136,11 +166,11 @@
   onMounted(() => {
     setOptions({
       title: {
-        text: deviceName,
+        text: props.deviceName,
         left: 'center',
         top: 'top',
         textStyle: {
-          fontSize: 18,
+          fontSize: 14,
           color: '#55acee',
           fontWeight: 'normal',
           lineHeight: 30,
@@ -174,7 +204,7 @@
         },
       },
       yAxis: {
-        name: '电流（mA）',
+        name: props.isBoxVolt ? '电压(kV)' : '电流（mA）',
         nameTextStyle: {
           color: '#3BDFFF',
         },
@@ -182,12 +212,6 @@
         splitLine: {
           lineStyle: {
             color: 'rgba(20, 225, 250, 0.2)',
-          },
-        },
-        axisLabel: {
-          //x轴文字的配置
-          textStyle: {
-            color: '#fff',
           },
         },
         axisLine: {
@@ -198,24 +222,74 @@
         },
       },
       grid: {
-        top: 52,
+        top: 60,
         left: 36,
         right: 40,
-        bottom: 30,
+        bottom: 50,
         containLabel: true,
         borderWidth: 0,
         borderColor: '#ccc',
       },
+      dataZoom: [
+        {
+          type: 'slider',
+          show: true,
+          xAxisIndex: [0],
+          start: 0,
+          end: 100,
+          height: 12,
+        },
+      ],
+      legend: {
+        data: [
+          props.isBoxVolt ? '电压(kV)' : '电流（mA）',
+          '相对电容量',
+          '相对介损',
+          '电容量',
+          '介损',
+        ],
+        textStyle: {
+          color: '#f1a89f',
+        },
+        top: 35,
+        right: 30, //可设定图例在左、右、居中
+        icon: 'line',
+      },
       series: [
         {
           data: props.historyList.map((ele) => {
-            return ele.currentRms;
+            return ele.monitorValue;
           }),
           type: 'line',
-          name: '电流（mA）',
-          itemStyle: {
-            color: '#5ab1ef',
-          },
+          name: props.isBoxVolt ? '电压(kV)' : '电流（mA）',
+        },
+        {
+          data: props.historyList.map((ele: { relativelyCap: any }) => {
+            return ele.relativelyCap;
+          }),
+          type: 'line',
+          name: '相对电容量',
+        },
+        {
+          data: props.historyList.map((ele: { relativelyLoss: any }) => {
+            return ele.relativelyLoss;
+          }),
+          type: 'line',
+          name: '相对介损',
+        },
+        {
+          data: props.historyList.map((ele: { cap: any }) => {
+            return ele.cap;
+          }),
+          type: 'line',
+          name: '电容量',
+        },
+        {
+          data: props.historyList.map((ele: { loss: any }) => {
+            return ele.loss;
+          }),
+          type: 'line',
+          name: '介损',
         },
       ],
     });

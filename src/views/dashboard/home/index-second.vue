@@ -1,6 +1,5 @@
 <template>
-  <div class="p-4 w-full" style="min-height: 100vh">
-    湿哒哒所多{{ timestamp }}
+  <div class="w-full" style="min-height: 100vh">
     <CasingCard
       v-if="deviceListData.length > 0"
       class="enter-y"
@@ -14,16 +13,16 @@
       @my-click="getDataTime"
       :timestamp="timestamp"
       :historyList="historyListData"
-      :deviceName="deviceListData[boxStatus].deviceName"
+      :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
+      :deviceName="deviceListData[boxStatus]['deviceName']"
     />
   </div>
 </template>
 <script lang="ts">
-  import { ref, computed, defineComponent, onMounted, onUnmounted } from 'vue';
+  import { ref, defineComponent, onMounted, onUnmounted } from 'vue';
   import CasingCard from './components/yg_card.vue';
   import YgAverage from './components/yg_average.vue';
   import {
-    newListApi,
     newListRefeshApi,
     newListHistoryRefeshApi,
     newListHistoryListApi,
@@ -43,29 +42,27 @@
       let boxStatus = ref(0);
       let timerTwo;
       let timerStatus = true;
-      let pages = {
-        pageNum: 1,
-        pageSize: 9999,
-      };
+
       const childRef = ref<any>();
-      async function sensorsNum(index, switchTime) {
+      async function sensorsNum(index) {
         boxStatus.value = index;
         clearInterval(timerTwo);
 
         if (timerStatus) {
           let refreshData = {
-            boardId: deviceListData.value[index].boardId,
-            bushingId: deviceListData.value[index].bushingId,
+            deviceUniqueId: deviceListData.value[index]['deviceUniqueId'],
           };
           const { historyList } = await newListHistoryRefeshApi(refreshData);
+
           historyListData.value = historyList;
-          timestamp.value = Date.parse(new Date());
+          // timestamp.value = Number(new Date());
+          childRef.value.onRangeChart(historyList, deviceListData.value[boxStatus.value]);
+
           timedTaskNow();
           timedTask();
         } else {
           let refreshData = {
-            boardId: deviceListData.value[boxStatus.value].boardId,
-            bushingId: deviceListData.value[boxStatus.value].bushingId,
+            deviceUniqueId: deviceListData.value[boxStatus.value]['deviceUniqueId'],
             startTime: startTimeData,
             endTime: endTimeData,
           };
@@ -76,15 +73,14 @@
           } else {
             historyListData.value = [];
           }
+          childRef.value.onRangeChart(historyList, deviceListData.value[boxStatus.value]);
 
-          timestamp.value = Date.parse(new Date());
+
+          // timestamp.value = Number(new Date());
         }
-
-        // childRef.value.timingStar();
-        // childRef.value.onRangeChart(historyListData);
       }
 
-      async function getDataTime(params: [], status) {
+      async function getDataTime(params, status) {
         timerStatus = status.value;
         startTimeData = params[0];
         endTimeData = params[1];
@@ -95,37 +91,41 @@
         } else {
           clearInterval(timerTwo);
           let refreshData = {
-            boardId: deviceListData.value[boxStatus.value].boardId,
-            bushingId: deviceListData.value[boxStatus.value].bushingId,
+            deviceUniqueId: deviceListData.value[boxStatus.value]['deviceUniqueId'],
             startTime: startTimeData,
             endTime: endTimeData,
           };
-          const { historyList } = await newListHistoryListApi(refreshData);
 
-          if (historyList) {
+          try {
+            const { historyList } = await newListHistoryListApi(refreshData);
             historyListData.value = historyList;
-          } else {
+          } catch (error) {
             historyListData.value = [];
           }
 
-          timestamp.value = Date.parse(new Date());
+          // if (historyList) {
+          //   historyListData.value = historyList;
+          // } else {
+          //   historyListData.value = [];
+          // }
+
+          timestamp.value = Number(new Date());
         }
       }
 
       async function timedTask() {
         if (deviceListData.value.length > 0) {
+          clearTimeout(timerTwo);
           timerTwo = setInterval(async () => {
-            timestamp.value = Date.parse(new Date());
             let { deviceList } = await newListRefeshApi();
             deviceListData.value = deviceList;
 
             let refreshData = {
-              boardId: deviceList[boxStatus.value].boardId,
-              bushingId: deviceList[boxStatus.value].bushingId,
+              deviceUniqueId: deviceListData.value[boxStatus.value]['deviceUniqueId'],
             };
             const { historyList } = await newListHistoryRefeshApi(refreshData);
             historyListData.value = historyList;
-            timestamp.value = Date.parse(new Date());
+            timestamp.value = Number(new Date());
           }, 5000);
         }
       }
@@ -134,26 +134,29 @@
         let { deviceList } = await newListRefeshApi();
         if (deviceList.length > 0) {
           let refreshData = {
-            boardId: deviceList[boxStatus.value].boardId,
-            bushingId: deviceList[boxStatus.value].bushingId,
+            deviceUniqueId: deviceList[boxStatus.value].deviceUniqueId,
           };
           const { historyList } = await newListHistoryRefeshApi(refreshData);
           historyListData.value = historyList;
+
+          timestamp.value = Number(new Date());
         }
         deviceListData.value = deviceList;
       }
 
       onMounted(async () => {
         let { deviceList } = await newListRefeshApi();
+        deviceListData.value = deviceList;
+
         if (deviceList.length > 0) {
           let refreshData = {
-            boardId: deviceList[boxStatus.value].boardId,
-            bushingId: deviceList[boxStatus.value].bushingId,
+            deviceUniqueId: deviceList[boxStatus.value].deviceUniqueId,
           };
+
           const { historyList } = await newListHistoryRefeshApi(refreshData);
           historyListData.value = historyList;
+          childRef.value.onRangeChart(historyList, deviceList[boxStatus.value]);
         }
-        deviceListData.value = deviceList;
         timedTask();
       });
 

@@ -46,9 +46,9 @@
   import { useModal } from '/@/components/Modal';
   import AccountModal from './AccountModal.vue';
 
-  import { columns, searchFormSchema } from './account.data';
+  import { columns, searchFormSchema } from './account.data'; 
   import { useGo } from '/@/hooks/web/usePage';
-
+ 
   export default defineComponent({
     name: 'AccountManagement',
     components: { BasicTable, PageWrapper, AccountModal, TableAction },

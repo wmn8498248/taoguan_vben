@@ -49,6 +49,7 @@ export interface PaginationProps {
  * @type number
  */
    limit?: number;
+   page?: number;
 
   /**
    * Whether to hide pager on single page
@@ -56,6 +57,8 @@ export interface PaginationProps {
    * @type boolean
    */
   hideOnSinglePage?: boolean;
+
+
 
   /**
    * determine whether pageSize can be changed

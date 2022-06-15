@@ -42,7 +42,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   &-content{
-    margin-top:40px;
+    margin-top: 30px;
     height: calc(100% - 85px);
     align-items: center;
   }

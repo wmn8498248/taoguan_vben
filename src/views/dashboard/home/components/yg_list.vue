@@ -6,8 +6,9 @@
       <a-select
         v-model:value="value"
         mode="multiple"
-        style="width: 120px; flex: 1"
+        style="flex: 0.5"
         placeholder="可选列"
+        @change="valueChange"
         :max-tag-count="maxTagCount"
         :options="options"
       >
@@ -15,10 +16,15 @@
           <span style="color: #fff">+ {{ omittedValues.length }} ...</span>
         </template>
       </a-select>
+      <span style="flex: 0.1; text-align: right">
+        <router-link to="/device/parameters">
+          <a-tag class="tag"> 更多 </a-tag>
+        </router-link></span
+      >
     </div>
     <div class="virtual-scroll-content">
       <div class="virtual-scroll__item virtual-scroll_tit">
-        <span class="title" v-for="item in value">{{ optionsName[item] }}</span>
+        <span class="title" v-for="item in value" :title="optionsName[item]">{{ optionsName[item] }}</span>
       </div>
       <VScroll :itemHeight="41" :items="deviceList" :height="250" :width="510" :bench="50">
         <template #default="{ item, index }">
@@ -30,7 +36,12 @@
             "
             @click="itemListClick(item, index)"
           >
-            <span v-for="el in value"> {{ item[el] }}</span>
+            <span
+              v-for="el in value"
+              :title="el == 'name' ? item.deviceBusiness.name : item[el] || '暂无'"
+            >
+              {{ el == 'name' ? item.deviceBusiness.name : item[el] || '暂无' }}</span
+            >
             <!-- <span
               ><Tag color="#669900">{{ item.deviceName }}</Tag></span
             >
@@ -61,73 +72,108 @@
   })();
 
   const props = {
-    deviceList: Array,
+    deviceList: { type: null, default: [] },
     count: { type: Number, default: 60 },
   };
 
   export default defineComponent({
-    components: { VScroll: VScroll, Divider, Tag, Icon, ASelect: Select },
+    components: { VScroll: VScroll, Divider, [Tag.name]: Tag, Icon, ASelect: Select },
     props,
     emits: ['my-click'],
     setup(props, contex) {
       // const { deviceList } = props;
       const optionsName = {
-        deviceName: '设备名称',
-        phase: '相对介损',
-        relativeCapacitance: '相对电容量',
-        dielectricLoss: '绝对介损',
+        name: '传感器名称',
+        monitorValue: '数值',
+        a3A31Percentage: '总谐波含量(%)',
+        a3Percentage: '3次谐波含量(%)',
+        a5Percentage: '5次谐波含量(%)',
         cap: '电容量(pF)',
-        volt: '电压(kV)',
-        currentRms: '电流(mA)',
+        capCurrent: '容性电流(mA)',
+        loss: '介损',
+        relativelyCap: '相对电容量(%)',
+        relativelyLoss: '相对介损',
+        resistanceCurrent: '阻性电流(mA)',
+        resistanceCurrentEval: '阻性电流等效值(mA)',
+        zeroMonitor: '零序电流(mA)',
       };
       const options = ref<SelectProps['options']>([
         {
-          label: '设备名称',
-          value: 'deviceName',
+          label: '数值',
+          value: 'monitorValue',
         },
         {
-          label: '相对介损',
-          value: 'phase',
+          label: '总谐波含量(%)',
+          value: 'a3A31Percentage',
         },
         {
-          label: '相对电容量',
-          value: 'relativeCapacitance',
+          label: '3次谐波含量(%):',
+          value: 'a3Percentage',
         },
         {
-          label: '绝对介损',
-          value: 'dielectricLoss',
+          label: '5次谐波含量(%):',
+          value: 'a5Percentage',
         },
         {
           label: '电容量(pF)',
           value: 'cap',
         },
         {
-          label: '电压(kV)',
-          value: 'volt',
+          label: '容性电流(mA)',
+          value: 'capCurrent',
         },
         {
-          label: '电流(mA)',
-          value: 'currentRms',
+          label: '介损',
+          value: 'loss',
+        },
+        {
+          label: '相对电容量(%)',
+          value: 'relativelyCap',
+        },
+        {
+          label: '相对介损',
+          value: 'relativelyLoss',
+        },
+        {
+          label: '阻性电流(mA)',
+          value: 'resistanceCurrent',
+        },
+        {
+          label: '阻性电流等效值(mA)',
+          value: 'resistanceCurrentEval',
+        },
+        {
+          label: '零序电流(mA)',
+          value: 'zeroMonitor',
         },
       ]);
-      const maxTagCount = ref(1);
+      const maxTagCount = ref(0);
       const maxTagTextLength = ref(10);
       let itemAction = ref(0);
 
       async function itemListClick(item: any, index) {
+        console.log(item, 'item__');
         contex.emit('my-click', index);
         itemAction.value = index;
       }
+      function valueChange(value) {
+        if (value.length > 4) {
+          // let valueSplice = value.length - 4
+          value.splice(1, 1);
+        }
+      }
+
       return {
         itemAction,
         optionsName,
         props,
-        value: ref(['deviceName', 'phase', 'relativeCapacitance', 'volt', 'currentRms']),
+        value: ref(['name', 'monitorValue', 'cap', 'loss']),
         options,
         maxTagCount,
         maxTagTextLength,
         data: data,
         itemListClick,
+        valueChange,
       };
     },
   });
@@ -175,13 +221,16 @@
       line-height: 40px;
       border-bottom: 1px solid #0e2589;
       display: flex;
-      justify-content: center;
+      width: 100%;
       text-align: center;
       cursor: pointer;
       span.title {
         color: #05fff6;
       }
       span {
+        overflow: hidden; //超出的文本隐藏
+        text-overflow: ellipsis; //溢出用省略号显示
+        white-space: nowrap; //溢出不换行
         flex: 1;
       }
     }

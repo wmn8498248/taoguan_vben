@@ -2,7 +2,7 @@ import {
   AccountParams,
   DeptListItem,
   MenuParams,
-  RoleParams,
+  RoleParams, 
   RolePageParams,
   MenuListGetResultModel,
   DeptListGetResultModel,

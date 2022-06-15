@@ -5,7 +5,7 @@
         {{ title }}
       </template>
       <template v-else>
-        <slot name="title"></slot>
+        <slot name="title"></slot> 
       </template>
     </BasicTitle>
     <div :class="`${prefixCls}__action`">

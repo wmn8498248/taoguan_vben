@@ -2,8 +2,12 @@
   <div class="virtual-alarm-wrap">
     <div class="virtual-alarm-title">
       <Icon icon="alarm|svg" :size="23" />
-      <!-- <span>设备报警{{alarmData}}</span> -->
-      <span>设备报警</span>
+      <span>设备报警({{ alarmData?.length }})</span>
+      <span style="flex: 1; text-align: right;">
+        <router-link to="/device/alarm">
+          <a-tag class="tag"> 更多 </a-tag>
+        </router-link></span
+      >
     </div>
     <div class="virtual-alarm-content">
       <a-list item-layout="horizontal" :data-source="alarmData">
@@ -15,20 +19,32 @@
                   >设备名称：<a-tag class="tag">{{ item.name || '暂无' }}</a-tag></div
                 >
                 <div class="title"
-                  >报警类型：<a-tag class="tag">{{ dataList[item.type] }}</a-tag></div
+                  >报警值：<a-tag class="tag" :color="alarmColor[item.alarmLevel]">{{
+                    item.monitorValue
+                  }}</a-tag></div
+                >
+                <div class="title"
+                  >报警等级：<a-tag class="tag" :color="alarmColor[item.alarmLevel]">{{
+                    alarmListData[item.alarmLevel]
+                  }}</a-tag></div
+                >
+                <div class="title"
+                  >报警类型：<a-tag class="tag" :color="alarmColor[item.alarmLevel]">{{
+                    dataList[item.alarmType]
+                  }}</a-tag></div
                 >
                 <div class="title">
                   报警时间：
-                  <a-tag class="tag">
-                    {{ item.createTime }}
+                  <a-tag class="tag" color="success">
+                    {{ item.fftId }}
                   </a-tag>
                 </div>
-                <div class="title">
+                <!-- <div class="title">
                   是否已处理
                   <a-tag class="tag">
                     {{ item.isClear ? '已处理' : '未处理' }}
                   </a-tag>
-                </div>
+                </div> -->
               </template>
             </a-list-item-meta>
           </a-list-item>
@@ -42,60 +58,22 @@
   import { List, Avatar, Tag, Typography } from 'ant-design-vue';
   import { Icon } from '/@/components/Icon';
 
-  interface DataItem {
-    title: string;
-  }
-  const data: DataItem[] = [
-    {
-      title: 'xxx设备 1',
-    },
-    {
-      title: 'xxx设备 2',
-    },
-    {
-      title: 'xxx设备 3',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-    {
-      title: 'xxx设备 4',
-    },
-  ];
+  const alarmColor = ['warning', '#e7ca1e', '#ff8000', '#cd201f'];
 
+  const alarmListData = ['无', '提示', '次要', '重要'];
   const dataList = [
     '无',
-    '泄露电流过高',
-    '泄露电流过低',
+    '电流过高',
+    '电流过低',
     '相对介损过高',
     '相对电容量过高',
     '零序电流过高1',
     '零序电流过高2',
-    '电容量波动过大',
+    '电容量超限',
+    '介损超限',
   ];
   const props = {
-    alarmPage: Array,
+    alarmPage: { type: null, default: [] },
     // alarmPage: {
     //   phase: String, //相对介损
     //   padding: String, //无关
@@ -124,10 +102,10 @@
     props,
     setup(props) {
       const alarmData = computed(() => props.alarmPage);
-      console.log(alarmData, 'alarmData___________');
       return {
+        alarmColor,
+        alarmListData,
         dataList,
-        data,
         alarmData,
       };
     },

@@ -177,7 +177,7 @@ const sysRoute = {
       component: '/demo/system/role/index',
     },
 
-    {
+    { 
       path: 'menu',
       name: 'MenuManagement',
       meta: {

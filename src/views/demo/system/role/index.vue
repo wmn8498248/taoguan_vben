@@ -6,7 +6,7 @@
       </template>
       <template #action="{ record }">
         <TableAction
-          :actions="[
+          :actions="[ 
             {
               icon: 'clarity:note-edit-line',
               onClick: handleEdit.bind(null, record),

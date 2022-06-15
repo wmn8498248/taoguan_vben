@@ -5,21 +5,20 @@
         ><Icon icon="transaction|svg" :size="25" /><span>历史数据统计{{ deviceName }}</span></div
       >
       <div>
-        <span
-          ><a-range-picker
-            v-model:value="valueTime"
-            :show-time="{ format: 'HH:mm:ss' }"
-            format="YYYY/MM/DD HH:mm:ss"
-            :placeholder="['开始时间', '结束时间']"
-            @change="onRangeChange"
-            @ok="onRangeOk"
-        /></span>
-        <a-button :type="!switchTime ? 'primary' : 'info'" @click="timingStop">
+        <a-range-picker
+          v-model:value="valueTime"
+          :show-time="{ format: 'HH:mm:ss' }"
+          format="YYYY-MM-DD HH:mm:ss"
+          :placeholder="['开始时间', '结束时间']"
+          @change="onRangeChange"
+          @ok="onRangeOk"
+        />
+        <a-button :type="!switchTime ? 'primary' : 'default'" @click="timingStop">
           查询
         </a-button></div
       >
       <div
-        ><a-button :type="switchTime ? 'primary' : 'info'" @click="timingStar">
+        ><a-button :type="switchTime ? 'primary' : 'default'" @click="timingStar">
           实时数据
         </a-button></div
       >
@@ -35,44 +34,45 @@
   import { basicProps } from './props';
   import { useECharts } from '/@/hooks/web/useECharts';
   import { Icon } from '/@/components/Icon';
-  import { DatePicker } from 'ant-design-vue';
+  import { DatePicker, Button } from 'ant-design-vue';
   import { Dayjs } from 'dayjs';
-  const props = {
+  let props = {
     ...basicProps,
+    isBoxVolt: { type: Boolean, default: true }, //电流/电压，isBoxVolt为true，表示电压(kV)，否则是电流(mA)
     timestamp: { type: Number, default: 0 },
     deviceName: { type: String },
-    historyList: {
-      fftId: String, //时间；横轴
-      currentRms: Number, //电流(mA)；纵轴
-      phase: Number, //相对介损
-      relativeCapacitance: Number, //相对电容量；单位*100%电容量；
-      padding: String, //无关
-      timeScale: String, //无关
-      pressure: String, //无关
-      bushingId: String, //相位
-    },
+    historyList: { type: null, default: [] },
+    // : {
+    //   fftId: String, //时间；横轴
+    //   currentRms: Number, //电流(mA)；纵轴
+    //   phase: Number, //相对介损
+    //   relativeCapacitance: Number, //相对电容量；单位*100%电容量；
+    //   padding: String, //无关
+    //   timeScale: String, //无关
+    //   pressure: String, //无关
+    //   bushingId: String, //相位
+    // },
   };
 
   export default defineComponent({
-    components: { Icon, ARangePicker: DatePicker.RangePicker },
+    components: { Icon, ARangePicker: DatePicker.RangePicker, AButton: Button },
     props,
     emits: ['my-click'],
-    setup(props, contex) {
+    setup(props: any, contex) {
       const chartRef = ref<HTMLDivElement | null>(null);
       const { setOptions } = useECharts(chartRef as Ref<HTMLDivElement>);
 
       const width = computed(() => props.width);
       const height = computed(() => props.height);
-      let historyListData = computed(() => props.historyList);
-      let deviceName = computed(() => props.deviceNam);
+      let deviceName = computed(() => props.deviceName);
       let timestamp = computed(() => props.timestamp);
-      
 
-      let dataTimeObj;
+      let dataTimeObj: [string, string];
       let switchTime: Ref<Boolean> = ref(true);
-      let valueTime = ref([])
-
+      let valueTime = ref();
+      // reactive
       const onRangeChange = (value: [Dayjs, Dayjs], dateString: [string, string]) => {
+        console.log(value);
         dataTimeObj = dateString;
       };
 
@@ -89,7 +89,7 @@
 
       function timingStar() {
         switchTime.value = true;
-        valueTime.value = []
+        valueTime.value = undefined;
         contex.emit('my-click', dataTimeObj, switchTime);
         console.log('switchTime', switchTime.value);
       }
@@ -97,11 +97,11 @@
       //   switchTime.value = true;
       // }
 
-      async function onRangeChart(res) {
-        let historyData = res.value;
+      async function onRangeChart(resData, resDevice) {
+        console.log;
         setOptions({
           title: {
-            text: props.deviceName,
+            text: resDevice['deviceName'],
             left: 'center',
             top: 'top',
             textStyle: {
@@ -122,8 +122,8 @@
           },
           xAxis: {
             type: 'category',
-            boundaryGap: false,
-            data: props.historyList.map((ele) => {
+            boundaryGap: [0, '100%'],
+            data: resData.map((ele: { fftId: string }) => {
               return ele.fftId.replace(' ', '\n');
             }),
             splitLine: {
@@ -139,7 +139,7 @@
             },
           },
           yAxis: {
-            name: '电流（mA）',
+            name: resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
             nameTextStyle: {
               color: '#3BDFFF',
             },
@@ -147,193 +147,6 @@
             splitLine: {
               lineStyle: {
                 color: 'rgba(20, 225, 250, 0.2)',
-              },
-            },
-            axisLabel: {
-              //x轴文字的配置
-              textStyle: {
-                color: '#fff',
-              },
-            },
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: 'rgba(20, 225, 250, 0.2)',
-              },
-            },
-          },
-          grid: {
-            top: 52,
-            left: 40,
-            right: 40,
-            bottom: 30,
-            containLabel: true,
-            borderWidth: 0,
-            borderColor: '#ccc',
-          },
-          series: [
-            {
-              data: props.historyList.map((ele) => {
-                return ele.currentRms;
-              }),
-              type: 'line',
-              name: '电流（mA）',
-              itemStyle: {
-                color: '#5ab1ef',
-              },
-            },
-          ],
-        });
-      }
-
-      watch(
-        timestamp,
-        () => {
-          console.log(timestamp,"监听timestamp")
-          setOptions({
-            title: {
-              text: props.deviceName,
-              left: 'center',
-              top: 'top',
-              textStyle: {
-                fontSize: 18,
-                color: '#55acee',
-                fontWeight: 'normal',
-                lineHeight: 30,
-              },
-            },
-            tooltip: {
-              trigger: 'axis',
-              axisPointer: {
-                lineStyle: {
-                  width: 1,
-                  color: '#019680',
-                },
-              },
-            },
-            xAxis: {
-              type: 'category',
-              boundaryGap: false,
-              data: props.historyList.map((ele) => {
-                return ele.fftId.replace(' ', '\n');
-              }),
-              splitLine: {
-                show: true,
-                lineStyle: {
-                  width: 1,
-                  type: 'dashed',
-                  color: 'rgba(226,226,226,0.2)',
-                },
-              },
-              axisTick: {
-                show: false,
-              },
-            },
-            yAxis: {
-              name: '电流（mA）',
-              nameTextStyle: {
-                color: '#3BDFFF',
-              },
-              type: 'value',
-              splitLine: {
-                lineStyle: {
-                  color: 'rgba(20, 225, 250, 0.2)',
-                },
-              },
-              axisLabel: {
-                //x轴文字的配置
-                textStyle: {
-                  color: '#fff',
-                },
-              },
-              axisLine: {
-                show: true,
-                lineStyle: {
-                  color: 'rgba(20, 225, 250, 0.2)',
-                },
-              },
-            },
-            grid: {
-              top: 52,
-              left: 36,
-              right: 40,
-              bottom: 30,
-              containLabel: true,
-              borderWidth: 0,
-              borderColor: '#ccc',
-            },
-            series: [
-              {
-                data: props.historyList.map((ele) => {
-                  return ele.currentRms;
-                }),
-                type: 'line',
-                name: '电流（mA）',
-                itemStyle: {
-                  color: '#5ab1ef',
-                },
-              },
-            ],
-          });
-        },
-        { deep: true },
-      );
-
-      onMounted(() => {
-        setOptions({
-          title: {
-            text: props.deviceName,
-            left: 'center',
-            top: 'top',
-            textStyle: {
-              fontSize: 18,
-              color: '#55acee',
-              fontWeight: 'normal',
-              lineHeight: 30,
-            },
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              lineStyle: {
-                width: 1,
-                color: '#019680',
-              },
-            },
-          },
-          xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: props.historyList.map((ele) => {
-              return ele.fftId.replace(' ', '\n');
-            }),
-            splitLine: {
-              show: true,
-              lineStyle: {
-                width: 1,
-                type: 'dashed',
-                color: 'rgba(226,226,226,0.2)',
-              },
-            },
-            axisTick: {
-              show: false,
-            },
-          },
-          yAxis: {
-            name: '电流（mA）',
-            nameTextStyle: {
-              color: '#3BDFFF',
-            },
-            type: 'value',
-            splitLine: {
-              lineStyle: {
-                color: 'rgba(20, 225, 250, 0.2)',
-              },
-            },
-            axisLabel: {
-              //x轴文字的配置
-              textStyle: {
-                color: '#fff',
               },
             },
             axisLine: {
@@ -352,20 +165,115 @@
             borderWidth: 0,
             borderColor: '#ccc',
           },
+          dataZoom: [
+            {
+              type: 'slider',
+              show: true,
+              xAxisIndex: [0],
+              start: 95,
+              end: 100,
+            },
+          ],
+          legend: {
+            data: [
+              resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
+              '相对电容量',
+              '相对介损',
+              '电容量',
+              '介损',
+            ],
+            textStyle: {
+              color: '#f1a89f',
+            },
+            top: 20,
+            right: 30, //可设定图例在左、右、居中
+            icon: 'line',
+          },
           series: [
             {
-              data: props.historyList.map((ele) => {
-                return ele.currentRms;
+              data: resData.map((ele: { monitorValue: any }) => {
+                return ele.monitorValue;
               }),
               type: 'line',
-              name: '电流（mA）',
-              itemStyle: {
-                color: '#5ab1ef',
-              },
+              name: resDevice['isBoxVolt']  ? '电压(kV)' : '电流（mA）',
+            },
+            {
+              data: resData.map((ele: { relativelyCap: any }) => {
+                return ele.relativelyCap;
+              }),
+              type: 'line',
+              name: '相对电容量',
+            },
+            {
+              data: resData.map((ele: { relativelyLoss: any }) => {
+                return ele.relativelyLoss;
+              }),
+              type: 'line',
+              name: '相对介损',
+            },
+            {
+              data: resData.map((ele: { cap: any }) => {
+                return ele.cap;
+              }),
+              type: 'line',
+              name: '电容量',
+            },
+            {
+              data: resData.map((ele: { loss: any }) => {
+                return ele.loss;
+              }),
+              type: 'line',
+              name: '介损',
             },
           ],
         });
-      });
+      }
+
+      watch(
+        timestamp,
+        () => {
+          setOptions(
+            {
+              xAxis: {
+                data: props.historyList.map((ele: { fftId: string }) => {
+                  return ele.fftId.replace(' ', '\n');
+                }),
+              },
+              series: [
+                {
+                  data: props.historyList.map((ele: { monitorValue: any }) => {
+                    return ele.monitorValue;
+                  }),
+                },
+                {
+                  data: props.historyList.map((ele: { relativelyCap: any }) => {
+                    return ele.relativelyCap;
+                  }),
+                },
+                {
+                  data: props.historyList.map((ele: { relativelyLoss: any }) => {
+                    return ele.relativelyLoss;
+                  }),
+                },
+                {
+                  data: props.historyList.map((ele: { cap: any }) => {
+                    return ele.cap;
+                  }),
+                },
+                {
+                  data: props.historyList.map((ele: { loss: any }) => {
+                    return ele.loss;
+                  }),
+                },
+              ],
+            },
+            false,
+          );
+        },
+        { deep: true },
+      );
+
+      onMounted(() => {});
 
       return {
         valueTime,
@@ -404,6 +312,12 @@
       align-items: center;
       span {
         padding-left: 10px;
+      }
+    }
+    @media screen and (max-width: 750px) {
+      &-title {
+        // 去除第3n个的margin-right
+        display: block;
       }
     }
 

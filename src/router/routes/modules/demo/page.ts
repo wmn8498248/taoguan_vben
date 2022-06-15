@@ -1,57 +1,84 @@
 import type { AppRouteModule } from '/@/router/types';
 
 import { getParentLayout, LAYOUT } from '/@/router/constant';
-import { ExceptionEnum } from '/@/enums/exceptionEnum';
-import { t } from '/@/hooks/web/useI18n';
 
-const ExceptionPage = () => import('/@/views/sys/exception/Exception.vue');
+// const ExceptionPage = () => import('/@/views/sys/exception/Exception.vue');
 
 const page: AppRouteModule = {
-  path: '/page-demo',
+  path: '/device',
   name: 'PageDemo',
   component: LAYOUT,
-  redirect: '/page-demo/form/basic',
   meta: {
     orderNo: 20,
     icon: 'ion:aperture-outline',
     // title: t('routes.demo.page.page'),
-    title: "套管页面设计",
+    title: '套管设备管理',
   },
   children: [
     // =============================form start=============================
     {
-      path: 'form',
-      name: 'FormPage',
-      redirect: '/page-demo/form/basic',
-      component: getParentLayout('FormPage'),
+      path: 'parameter_detail/:id',
+      name: 'ParameterDetail',
       meta: {
-        title: "设备业务参数管理示例",
+        hideMenu: true,
+        title: '设备修改',
+        ignoreKeepAlive: true,
+        showMenu: false,
+      },
+      component: () => import('/@/views/device/parameters/high/index.vue'),
+    },
+    {
+      path: 'parameter_info/:id',
+      name: 'ParameterInfo',
+      meta: {
+        hideMenu: true,
+        title: '设备详情',
+        ignoreKeepAlive: true,
+        showMenu: false,
+      },
+      component: () => import('/@/views/device/parameters/high/index.vue'),
+    },
+    {
+      path: 'parameters',
+      name: 'parameters',
+      component: () => import('/@/views/device/parameters/index.vue'),
+      meta: {
+        title: '设备列表',
+      },
+    },
+
+    {
+      path: 'alarm',
+      name: 'alarm',
+      component: () => import('/@/views/device/alarm/index.vue'),
+      meta: {
+        title: '报警管理',
       },
       children: [
-        {
-          path: 'basic',
-          name: 'FormBasicPage',
-          component: () => import('/@/views/demo/page/form/basic/index.vue'),
-          meta: {
-            title: t('routes.demo.page.formBasic'),
-          },
-        },
-        {
-          path: 'step',
-          name: 'FormStepPage',
-          component: () => import('/@/views/demo/page/form/step/index.vue'),
-          meta: {
-            title: t('routes.demo.page.formStep'),
-          },
-        },
-        {
-          path: 'high',
-          name: 'FormHightPage',
-          component: () => import('/@/views/demo/page/form/high/index.vue'),
-          meta: {
-            title: t('routes.demo.page.formHigh'),
-          },
-        },
+        // {
+        //   path: 'basic',
+        //   name: 'FormBasicPage',
+        //   component: () => import('/@/views/demo/page/form/basic/index.vue'),
+        //   meta: {
+        //     title: '报警管理',
+        //   },
+        // },
+        // {
+        //   path: 'step',
+        //   name: 'FormStepPage',
+        //   component: () => import('/@/views/demo/page/form/step/index.vue'),
+        //   meta: {
+        //     title: t('routes.demo.page.formStep'),
+        //   },
+        // },
+        // {
+        //   path: 'high',
+        //   name: 'FormHightPage',
+        //   component: () => import('/@/views/demo/page/form/high/index.vue'),
+        //   meta: {
+        //     title: t('routes.demo.page.formHigh'),
+        //   },
+        // },
       ],
     },
     // =============================form end=============================
@@ -60,27 +87,26 @@ const page: AppRouteModule = {
       path: 'desc',
       name: 'DescPage',
       component: getParentLayout('DescPage'),
-      redirect: '/page-demo/desc/basic',
       meta: {
-        title: "突变量列表页面示例",
+        title: '突变相关',
       },
       children: [
         {
-          path: 'basic',
-          name: 'DescBasicPage',
-          component: () => import('/@/views/demo/page/desc/basic/index.vue'),
+          path: 'suddenList',
+          name: 'suddenList',
+          component: () => import('/@/views/device/recording/suddenList.vue'),
           meta: {
-            title: t('routes.demo.page.descBasic'),
+            title: '突变列表',
           },
         },
-        {
-          path: 'high',
-          name: 'DescHighPage',
-          component: () => import('/@/views/demo/page/desc/high/index.vue'),
-          meta: {
-            title: t('routes.demo.page.descHigh'),
-          },
-        },
+        // {
+        //   path: 'high',
+        //   name: 'DescHighPage',
+        //   component: () => import('/@/views/demo/page/desc/high/index.vue'),
+        //   meta: {
+        //     title: t('routes.demo.page.descHigh'),
+        //   },
+        // },
       ],
     },
     // =============================desc end=============================
@@ -89,167 +115,29 @@ const page: AppRouteModule = {
     {
       path: 'result',
       name: 'ResultPage',
-      redirect: '/page-demo/result/success',
       component: getParentLayout('ResultPage'),
-
       meta: {
-        title: "录波相关",
+        title: '录波相关',
       },
       children: [
         {
-          path: 'success',
-          name: 'ResultSuccessPage',
-          component: () => import('/@/views/demo/page/result/success/index.vue'),
+          path: 'recordingNew',
+          name: 'recordingNew',
+          component: () => import('/@/views/device/recording/recordingNew.vue'),
           meta: {
-            title: t('routes.demo.page.resultSuccess'),
+            title: '查询最新录波列表',
           },
         },
         {
-          path: 'fail',
-          name: 'ResultFailPage',
-          component: () => import('/@/views/demo/page/result/fail/index.vue'),
+          path: 'recordingList',
+          name: 'recordingList',
+          component: () => import('/@/views/device/recording/recordingList.vue'),
           meta: {
-            title: t('routes.demo.page.resultFail'),
+            title: '本地已保存录波列表',
           },
         },
       ],
     },
-    // =============================result end=============================
-
-    // =============================account start=============================
-    {
-      path: 'account',
-      name: 'AccountPage',
-      component: getParentLayout('AccountPage'),
-      redirect: '/page-demo/account/setting',
-      meta: {
-        title: t('routes.demo.page.account'),
-      },
-      children: [
-        {
-          path: 'center',
-          name: 'AccountCenterPage',
-          component: () => import('/@/views/demo/page/account/center/index.vue'),
-          meta: {
-            title: t('routes.demo.page.accountCenter'),
-          },
-        },
-        {
-          path: 'setting',
-          name: 'AccountSettingPage',
-          component: () => import('/@/views/demo/page/account/setting/index.vue'),
-          meta: {
-            title: t('routes.demo.page.accountSetting'),
-          },
-        },
-      ],
-    },
-    // =============================account end=============================
-    // =============================exception start=============================
-    {
-      path: 'exception',
-      name: 'ExceptionPage',
-      component: getParentLayout('ExceptionPage'),
-      redirect: '/page-demo/exception/404',
-      meta: {
-        title: t('routes.demo.page.exception'),
-      },
-      children: [
-        {
-          path: '403',
-          name: 'PageNotAccess',
-          component: ExceptionPage,
-          props: {
-            status: ExceptionEnum.PAGE_NOT_ACCESS,
-          },
-          meta: {
-            title: '403',
-          },
-        },
-        {
-          path: '404',
-          name: 'PageNotFound',
-          component: ExceptionPage,
-          props: {
-            status: ExceptionEnum.PAGE_NOT_FOUND,
-          },
-          meta: {
-            title: '404',
-          },
-        },
-        {
-          path: '500',
-          name: 'ServiceError',
-          component: ExceptionPage,
-          props: {
-            status: ExceptionEnum.ERROR,
-          },
-          meta: {
-            title: '500',
-          },
-        },
-        {
-          path: 'net-work-error',
-          name: 'NetWorkError',
-          component: ExceptionPage,
-          props: {
-            status: ExceptionEnum.NET_WORK_ERROR,
-          },
-          meta: {
-            title: t('routes.demo.page.netWorkError'),
-          },
-        },
-        {
-          path: 'not-data',
-          name: 'NotData',
-          component: ExceptionPage,
-          props: {
-            status: ExceptionEnum.PAGE_NOT_DATA,
-          },
-          meta: {
-            title: t('routes.demo.page.notData'),
-          },
-        },
-      ],
-    },
-    // =============================exception end=============================
-    // =============================list start=============================
-    {
-      path: 'list',
-      name: 'ListPage',
-      component: getParentLayout('ListPage'),
-      redirect: '/page-demo/list/card',
-      meta: {
-        title: t('routes.demo.page.list'),
-      },
-      children: [
-        {
-          path: 'basic',
-          name: 'ListBasicPage',
-          component: () => import('/@/views/demo/page/list/basic/index.vue'),
-          meta: {
-            title: t('routes.demo.page.listBasic'),
-          },
-        },
-        {
-          path: 'card',
-          name: 'ListCardPage',
-          component: () => import('/@/views/demo/page/list/card/index.vue'),
-          meta: {
-            title: t('routes.demo.page.listCard'),
-          },
-        },
-        {
-          path: 'search',
-          name: 'ListSearchPage',
-          component: () => import('/@/views/demo/page/list/search/index.vue'),
-          meta: {
-            title: t('routes.demo.page.listSearch'),
-          },
-        },
-      ],
-    },
-    // =============================list end=============================
   ],
 };
 

@@ -123,7 +123,7 @@
     min-height: 100%;
     overflow: hidden;
     @media (max-width: @screen-xl) {
-      background-color: #293146;
+      background-color: #1e4cad;
 
       .@{prefix-cls}-form {
         background-color: #fff;

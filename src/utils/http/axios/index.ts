@@ -41,7 +41,6 @@ const transform: AxiosTransform = {
     if (!isTransformResponse) {
       return res.data;
     }
-    
 
     // 错误的时候返回
 
@@ -52,7 +51,7 @@ const transform: AxiosTransform = {
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
 
-    const { code, message } = data;
+    const { code, message, msg } = data;
 
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
@@ -71,6 +70,7 @@ const transform: AxiosTransform = {
         userStore.logout(true);
         break;
       default:
+        console.log(msg, 'msg____________');
         if (message) {
           timeoutMsg = message;
           return res;
@@ -82,7 +82,7 @@ const transform: AxiosTransform = {
     if (options.errorMessageMode === 'modal') {
       createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
     } else if (options.errorMessageMode === 'message') {
-      createMessage.error(timeoutMsg);
+      createMessage.error(msg);
     }
 
     throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));

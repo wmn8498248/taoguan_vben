@@ -94,7 +94,7 @@
 
       return {
         register1,
-        openModal1,
+        openModal1, 
         register2,
         openModal2,
         register3,
