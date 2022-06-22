@@ -93,15 +93,12 @@
         contex.emit('my-click', dataTimeObj, switchTime);
         console.log('switchTime', switchTime.value);
       }
-      // async function onRangeChart(){
-      //   switchTime.value = true;
-      // }
 
       async function onRangeChart(resData, resDevice) {
-        console.log;
+        // console.log(resDevice, 'res____________');
         setOptions({
           title: {
-            text: resDevice['deviceName'],
+            text: resDevice['name'],
             left: 'center',
             top: 'top',
             textStyle: {
@@ -195,7 +192,7 @@
                 return ele.monitorValue;
               }),
               type: 'line',
-              name: resDevice['isBoxVolt']  ? '电压(kV)' : '电流（mA）',
+              name: resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
             },
             {
               data: resData.map((ele: { relativelyCap: any }) => {

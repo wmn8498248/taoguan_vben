@@ -10,11 +10,19 @@ enum Api {
   NEW_LIST_REFESH = '/msg/list/refresh',
   NEW_LIST_HISTORY_REFESH = '/msg/list/history/refresh',
   NEW_LIST_HISTORYLIST = '/msg/list/historyList',
+  MSG_FIELDS_ALL = '/msg/fields/all',
+  MSG_FIELDS_UPDATE = '/msg/fields/update',
 }
 
 // Get personal center-basic settings
-// 首页信息
+// 获取要展示的字段
+export const msgFieldsAllApi = () => defHttp.get<getHomeModel>({ url: Api.MSG_FIELDS_ALL });
 
+// 整体更新需要展示的字段
+export const msgFieldsUpdateApi = (data: []) =>
+  defHttp.post<getHomeModel>({ url: Api.MSG_FIELDS_UPDATE, data });
+
+// 首页信息
 export const newHomeApi = () => defHttp.get<getHomeModel>({ url: Api.NEW_HOME });
 
 // 首页定时请求

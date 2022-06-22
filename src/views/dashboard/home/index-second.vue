@@ -56,7 +56,11 @@
 
           historyListData.value = historyList;
           // timestamp.value = Number(new Date());
-          childRef.value.onRangeChart(historyList, deviceListData.value[boxStatus.value]);
+          // console.log(deviceListData.value[boxStatus.value], '__________________');
+          childRef.value.onRangeChart(
+            historyList,
+            deviceListData.value[boxStatus.value]['deviceBusiness'],
+          );
 
           timedTaskNow();
           timedTask();
@@ -73,8 +77,11 @@
           } else {
             historyListData.value = [];
           }
-          childRef.value.onRangeChart(historyList, deviceListData.value[boxStatus.value]);
 
+          childRef.value.onRangeChart(
+            historyList,
+            deviceListData.value[boxStatus.value]['deviceBusiness'],
+          );
 
           // timestamp.value = Number(new Date());
         }
@@ -155,7 +162,7 @@
 
           const { historyList } = await newListHistoryRefeshApi(refreshData);
           historyListData.value = historyList;
-          childRef.value.onRangeChart(historyList, deviceList[boxStatus.value]);
+          childRef.value.onRangeChart(historyList, deviceList[boxStatus.value]['deviceBusiness']);
         }
         timedTask();
       });

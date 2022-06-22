@@ -1,6 +1,76 @@
 import { FormProps, FormSchema } from '/@/components/Table';
 import { BasicColumn } from '/@/components/Table/src/types/table';
 
+export function optionsName(): {} {
+  return {
+    name: '传感器名称',
+    monitorValue: '数值',
+    a3A31Percentage: '总谐波含量(%)',
+    a3Percentage: '3次谐波含量(%)',
+    a5Percentage: '5次谐波含量(%)',
+    cap: '电容量(pF)',
+    capCurrent: '容性电流(mA)',
+    loss: '介损',
+    relativelyCap: '相对电容量(%)',
+    relativelyLoss: '相对介损',
+    resistanceCurrent: '阻性电流(mA)',
+    resistanceCurrentEval: '阻性电流等效值(mA)',
+    zeroMonitor: '零序电流(mA)',
+  };
+}
+export function options(): any[] {
+  return [
+    {
+      label: '数值',
+      value: 'monitorValue',
+    },
+    {
+      label: '总谐波含量(%)',
+      value: 'a3A31Percentage',
+    },
+    {
+      label: '3次谐波含量(%):',
+      value: 'a3Percentage',
+    },
+    {
+      label: '5次谐波含量(%):',
+      value: 'a5Percentage',
+    },
+    {
+      label: '电容量(pF)',
+      value: 'cap',
+    },
+    {
+      label: '容性电流(mA)',
+      value: 'capCurrent',
+    },
+    {
+      label: '介损',
+      value: 'loss',
+    },
+    {
+      label: '相对电容量(%)',
+      value: 'relativelyCap',
+    },
+    {
+      label: '相对介损',
+      value: 'relativelyLoss',
+    },
+    {
+      label: '阻性电流(mA)',
+      value: 'resistanceCurrent',
+    },
+    {
+      label: '阻性电流等效值(mA)',
+      value: 'resistanceCurrentEval',
+    },
+    {
+      label: '零序电流(mA)',
+      value: 'zeroMonitor',
+    },
+  ];
+}
+
 export function getBasicColumns(): BasicColumn[] {
   return [
     {

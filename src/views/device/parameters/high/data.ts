@@ -3,23 +3,31 @@ import { FormSchema } from '/@/components/Form';
 // const isButton = (type: string) => type === '2';
 const basicOptions: LabelValueOptions = [
   {
-    label: '是',
-    value: true,
+    label: '电流监测',
+    value: 1,
   },
   {
-    label: '否',
-    value: false,
+    label: 'pt电压检测',
+    value: 2,
+  },
+  {
+    label: '分压盒检测',
+    value: 3,
   },
 ];
 
 const storeTypeOptions: LabelValueOptions = [
   {
-    label: '私密',
-    value: '1',
+    label: 'A',
+    value: 'A',
   },
   {
-    label: '公开',
-    value: '2',
+    label: 'B',
+    value: 'B',
+  },
+  {
+    label: 'C',
+    value: 'C',
   },
 ];
 
@@ -43,7 +51,7 @@ export const schemas: FormSchema[] = [
     field: 'id',
     component: 'InputNumber',
     label: 'id',
-    show: false
+    show: false,
   },
   {
     field: 'name',
@@ -56,118 +64,96 @@ export const schemas: FormSchema[] = [
     label: '板子编号',
   },
   {
+    field: 'threePhase',
+    component: 'Select',
+    label: '三相',
+    componentProps: {
+      options: storeTypeOptions,
+    },
+  },
+  {
     field: 'bushingId',
     component: 'InputNumber',
     label: 'bushingId',
     defaultValue: null,
   },
   {
-    field: 'threePhase',
-    component: 'Input',
-    label: '三相',
-  },
-
-  // {
-  //   field: 'sortNum',
-  //   component: 'Select',
-  //   label: '显示顺序',
-  //   defaultValue: [],
-  //   componentProps: {
-  //     mode: 'multiple',
-  //     options: storeTypeOptions,
-  //   },
-  // },
-  {
     field: 'sortNum',
     component: 'InputNumber',
     label: '显示顺序',
+    helpMessage: ['数字越大排序越后！'],
     defaultValue: 0,
   },
   {
     field: 'monitorRatioK',
     component: 'InputNumber',
     label: '监测数据变比系数k:',
-    defaultValue: null
+    // label: '监测数据变比系数k:',
+    defaultValue: null,
   },
   {
     field: 'monitorFilterA',
     component: 'InputNumber',
     label: '监测数据滤波系数a',
-    defaultValue: null
+    defaultValue: null,
   },
   {
     field: 'phaseCom',
     component: 'InputNumber',
     label: '相位补偿值',
-    defaultValue: null
+    defaultValue: null,
   },
   {
     field: 'isSelect',
-    component: 'RadioGroup',
     label: '是否启用',
-    componentProps: {
-      options: basicOptions,
-    },
+    component: 'Switch',
     defaultValue: false,
   },
-
-  // {
-  //   field: 'bushingId',
-  //   component: 'Select',
-  //   label: '仓库管理员',
-  //   componentProps: {
-  //     options: basicOptions,
-  //   },
-  //   required: true,
-  // },
-  // {
-  //   field: 'f4',
-  //   component: 'Select',
-  //   label: '审批人',
-  //   componentProps: {
-  //     options: basicOptions,
-  //   },
-  //   required: true,
-  // },
-  // {
-  //   field: 'f5',
-  //   component: 'RangePicker',
-  //   label: '生效日期',
-  //   required: true,
-  // },
-  // {
-  //   field: 'f6',
-  //   component: 'Select',
-  //   label: '仓库类型',
-  //   componentProps: {
-  //     options: storeTypeOptions,
-  //   },
-  //   required: true,
-  // },
-];
-export const taskSchemas: FormSchema[] = [
   {
     field: 'isPtVolt',
-    component: 'RadioGroup',
     label: 'pt电压监测',
-    componentProps: {
-      options: basicOptions,
-    },
+    component: 'Switch',
     defaultValue: false,
-    colProps: {
-      span: 12,
-    },
+    show: false,
   },
   {
     field: 'isBoxVolt',
-    component: 'RadioGroup',
     label: '分压盒监测',
+    component: 'Switch',
+    defaultValue: false,
+    show: false,
+  },
+  {
+    field: 'isCurrent',
+    label: '电流监测',
+    component: 'Switch',
+    defaultValue: false,
+    show: false,
+  },
+
+  {
+    field: 'MontiType',
+    label: '检测类型',
+    component: 'Select',
     componentProps: {
       options: basicOptions,
     },
-    defaultValue: false,
+    defaultValue: 1,
+  },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '额外参数',
     colProps: {
-      span: 12,
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
     },
   },
   {
@@ -175,16 +161,22 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '电压分组',
     ifShow: ({ values }) => {
-      return !values.isPtVolt || !values.isBoxVolt;
+      return values.MontiType;
     },
-    defaultValue: null
+    defaultValue: null,
   },
+
   {
     field: 'alarmDuration',
     component: 'InputNumber',
-    label: '持续触发门限多长时间报警',
+    label: '触发门限报警',
+    helpMessage: ['持续触发门限多长时间报警!'],
+    componentProps: {
+      addonBefore: '持续',
+      addonAfter: '秒',
+    },
     ifShow: ({ values }) => {
-      return !values.isPtVolt && values.isBoxVolt;
+      return values.MontiType !== 2;
     },
     defaultValue: null,
   },
@@ -193,7 +185,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '介损超限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && values.isBoxVolt;
+      return values.MontiType === 3;
     },
     defaultValue: null,
   },
@@ -202,7 +194,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '介损超限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && values.isBoxVolt;
+      return values.MontiType === 3;
     },
     defaultValue: null,
   },
@@ -211,40 +203,86 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '介损超限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && values.isBoxVolt;
+      return values.MontiType === 3;
     },
     defaultValue: null,
   },
-
   {
     field: 'isPercentageAlarmCap',
-    component: 'RadioGroup',
-    label: '电容量报警门限百分数表示',
-    componentProps: {
-      options: basicOptions,
-    },
+    component: 'Switch',
+    label: '电容量报警门限百分数',
+
     ifShow: ({ values }) => {
-      return !values.isPtVolt;
+      return values.MontiType !== 2;
     },
     defaultValue: false,
   },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '启用电容量报警门限百分数表示-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType !== 2 && values.isPercentageAlarmCap;
+    },
+  },
+
   {
     field: 'capInitial',
     component: 'InputNumber',
-    subLabel: '【电容量基准值】',
-    label: '',
+    label: '电容量基准值',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && values.isPercentageAlarmCap;
+      return values.MontiType !== 2 && values.isPercentageAlarmCap;
+    },
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
     },
     defaultValue: null,
   },
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType !== 2 && values.isPercentageAlarmCap;
+    },
+  },
+
   {
     field: 'alarmCap1',
     component: 'InputNumber',
     label: '电容量超限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt;
+      return values.MontiType !== 2;
     },
+
     defaultValue: null,
   },
   {
@@ -252,7 +290,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '电容量超限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt;
+      return values.MontiType !== 2;
     },
     defaultValue: null,
   },
@@ -261,46 +299,81 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '电容量超限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt;
+      return values.MontiType !== 2;
     },
     defaultValue: null,
   },
   {
     field: 'isSegmentCalibrationLoss',
-    component: 'RadioGroup',
+    component: 'Switch',
     label: '启用介损分段校准',
-    componentProps: {
-      options: basicOptions,
-    },
     ifShow: ({ values }) => {
-      return !values.isPtVolt;
+      return values.MontiType !== 2;
     },
     defaultValue: false,
   },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '启用介损分段校准-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType !== 2 && values.isSegmentCalibrationLoss;
+    },
+  },
+
   {
     field: 'segmentCalibrationLossMinRms',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【电流小于此值进行介损分段补偿】',
+    label: '电流小于此值进行介损分段补偿',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && values.isSegmentCalibrationLoss;
+      return values.MontiType !== 2 && values.isSegmentCalibrationLoss;
     },
-    defaultValue: null
-  },
- 
-  {
-    field: 'isSegmentCalibrationMonitor',
-    component: 'RadioGroup',
-    label: '启用监测数据分段校准',
     componentProps: {
-      options: basicOptions,
+      addonBefore: '小于',
+      addonAfter: 'mA',
+    },
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    defaultValue: null,
+  },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
     },
     ifShow: ({ values }) => {
-      return !values.isPtVolt;
+      return values.MontiType !== 2 && values.isSegmentCalibrationLoss;
     },
-    defaultValue: false,
   },
- 
 
   {
     field: 'companyId',
@@ -319,144 +392,292 @@ export const taskSchemas: FormSchema[] = [
       options: CalculationTypeOptions,
     },
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
+    },
+  },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '计算方法-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.calculationMethod;
     },
   },
 
   {
     field: 'relativelyGbOrder',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【国标法相对计算参考顺序】',
-    
+    label: '国标法相对计算参考顺序',
+
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.calculationMethod == 1;
+      return values.MontiType === 1 && values.calculationMethod == 1;
     },
-    defaultValue: null
+    defaultValue: null,
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
   },
   {
     field: 'rmsGroup',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【自定义法相对计算分组】',
-
+    label: '自定义法相对计算分组',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.calculationMethod == 2;
+      return values.MontiType === 1 && values.calculationMethod == 2;
     },
     defaultValue: null,
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
   },
   {
     field: 'isUseCapInitial',
-    component: 'RadioGroup',
-    label: '',
-    subLabel: '【自定义法使用预制电容量】',
-    componentProps: {
-      options: basicOptions,
-    },
+    component: 'Switch',
+    label: '自定义法使用预制电容量',
+    // componentProps: {
+    //   options: basicOptions,
+    // },
     defaultValue: false,
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.calculationMethod == 3;
+      return values.MontiType === 1 && values.calculationMethod == 3;
+    },
+    colProps: {
+      xl: {
+        span: 8,
+        offset: 0,
+      },
+      xxl: {
+        span: 6,
+        offset: 0,
+      },
     },
   },
 
   {
     field: 'capInitial',
     component: 'Input',
-    label: '',
-    subLabel: '【电容量基准值】',
+    label: '电容量基准值',
     ifShow: ({ values }) => {
       return (
-        !values.isPtVolt &&
+        values.MontiType !== 2 &&
         !values.isBoxVolt &&
         values.calculationMethod == '3' &&
         values.isUseCapInitial
       );
     },
+    colProps: {
+      xl: {
+        span: 8,
+        offset: 0,
+      },
+      xxl: {
+        span: 6,
+        offset: 0,
+      },
+    },
+  },
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.calculationMethod;
+    },
   },
 
   {
     field: 'isProtectionMonitor',
-    component: 'RadioGroup',
+    component: 'Switch',
     label: '启用监测数据保护',
-    componentProps: {
-      options: basicOptions,
-    },
+    // componentProps: {
+    //   options: basicOptions,
+    // },
     defaultValue: false,
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
+    },
+  },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '启用监测数据保护-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isProtectionMonitor;
     },
   },
 
   {
     field: 'monitorReferenceValue',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【监测数据标准值】',
+    label: '监测数据标准值',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isProtectionMonitor;
+      return values.MontiType === 1 && values.isProtectionMonitor;
     },
-    defaultValue:null
+    defaultValue: null,
   },
   {
     field: 'monitorProtectionMin',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【触发保护的最小监测值】',
-
+    label: '触发保护的最小监测值',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isProtectionMonitor;
+      return values.MontiType === 1 && values.isProtectionMonitor;
     },
-    defaultValue: null
+    defaultValue: null,
   },
   {
     field: 'monitorProtectionRange',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【监测数据的保护百分比范围】',
+    label: '监测数据的保护百分比范围',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isProtectionMonitor;
+      return values.MontiType === 1 && values.isProtectionMonitor;
     },
-    defaultValue: null
+    defaultValue: null,
   },
 
   {
-    field: 'alarmDuration',
-    component: 'Input',
-    label: '持续触发门限多长时间报警',
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1 && values.isProtectionMonitor;
     },
   },
+
+  // {
+  //   field: 'alarmDuration',
+  //   component: 'Input',
+  //   label: '持续触发门限多长时间报警',
+  //   ifShow: ({ values }) => {
+  //     return values.MontiType === 1;
+  //   },
+  // },
 
   {
     field: 'isPercentageAlarmMonitor',
-    component: 'RadioGroup',
+    component: 'Switch',
     label: '监测数据报警上下限显示百分数',
-    componentProps: {
-      options: basicOptions,
-    },
     defaultValue: false,
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
+    },
+  },
+
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '启用监测数据报警上下限显示百分数-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isPercentageAlarmMonitor;
+    },
+  },
+
+  {
+    field: 'monitorReferenceValue',
+    component: 'InputNumber',
+    label: '监测数据标准值',
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isPercentageAlarmMonitor;
+    },
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
     },
   },
   {
-    field: 'monitorReferenceValue',
-    component: 'Input',
+    field: 'divider-linked',
+    component: 'Divider',
     label: '',
-    subLabel: '【监测数据标准值】',
-
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isPercentageAlarmMonitor;
+      return values.MontiType === 1 && values.isPercentageAlarmMonitor;
     },
   },
-
   {
     field: 'alarmUpperMonitor1',
     component: 'InputNumber',
     label: '监测数据报警上限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -465,7 +686,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '监测数据报警上限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -474,7 +695,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '监测数据报警上限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -484,7 +705,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '监测数据报警下限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -493,7 +714,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '监测数据报警下限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -502,7 +723,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '监测数据报警下限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -512,7 +733,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '相对介损超限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -521,7 +742,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '相对介损超限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -530,7 +751,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '相对介损超限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -540,7 +761,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '相对电容量超限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -549,7 +770,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '相对电容量超限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -558,7 +779,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'InputNumber',
     label: '相对电容量超限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
     defaultValue: null,
   },
@@ -568,7 +789,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'Input',
     label: '介损超限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
   },
   {
@@ -576,7 +797,7 @@ export const taskSchemas: FormSchema[] = [
     component: 'Input',
     label: '介损超限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
   },
   {
@@ -584,66 +805,158 @@ export const taskSchemas: FormSchema[] = [
     component: 'Input',
     label: '介损超限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1;
     },
   },
 
   {
-    field: 'isHarmonic',
-    component: 'RadioGroup',
-    label: '是否统计谐波',
-    componentProps: {
-      options: basicOptions,
+    field: 'isZeroCal',
+    component: 'Switch',
+    label: '是否零序计算',
+    ifShow: ({ values }) => {
+      return values.MontiType === 1;
+    },
+  },
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '开启零序计算-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
     },
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt;
+      return values.MontiType === 1 && values.isZeroCal;
     },
   },
-
   {
-    field: 'resistanceEvalK',
+    field: 'zeroGroup',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【阻性电流等效系数k】',
-
+    label: '零序计算分组',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isHarmonic;
+      return values.MontiType === 1 && values.isZeroCal;
     },
-    defaultValue: null
+    defaultValue: null,
   },
+
   {
     field: 'alarmUpperZeroCurrent1',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【零序电流超限等级1】',
-
+    label: '零序电流超限等级1',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isHarmonic;
+      return values.MontiType === 1 && values.isZeroCal;
     },
     defaultValue: null,
   },
   {
     field: 'alarmUpperZeroCurrent2',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【零序电流超限等级2】',
-
+    label: '零序电流超限等级2',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isHarmonic;
+      return values.MontiType === 1 && values.isZeroCal;
     },
     defaultValue: null,
   },
   {
     field: 'alarmUpperZeroCurrent3',
     component: 'InputNumber',
-    label: '',
-    subLabel: '【零序电流超限等级3】',
-
+    label: '零序电流超限等级3',
     ifShow: ({ values }) => {
-      return !values.isPtVolt && !values.isBoxVolt && values.isHarmonic;
+      return values.MontiType === 1 && values.isZeroCal;
     },
     defaultValue: null,
   },
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isZeroCal;
+    },
+  },
+
+  {
+    field: 'isHarmonic',
+    component: 'Switch',
+    label: '是否统计谐波',
+    ifShow: ({ values }) => {
+      return values.MontiType === 1;
+    },
+  },
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '开启统计谐波-参数',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isHarmonic;
+    },
+  },
+
+  {
+    field: 'resistanceEvalK',
+    component: 'InputNumber',
+    label: '阻性电流等效系数k',
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isHarmonic;
+    },
+    defaultValue: null,
+  },
+  {
+    field: 'divider-linked',
+    component: 'Divider',
+    label: '',
+    colProps: {
+      xl: {
+        span: 24,
+        offset: 0,
+      },
+      xxl: {
+        span: 24,
+        offset: 0,
+      },
+    },
+    ifShow: ({ values }) => {
+      return values.MontiType === 1 && values.isHarmonic;
+    },
+  },
+  {
+    field: 'isSegmentCalibrationMonitor',
+    component: 'Switch',
+    label: '启用监测数据分段校准',
+    ifShow: ({ values }) => {
+      return values.MontiType !== 2;
+    },
+    defaultValue: false,
+  },
+];
+
+export const taskSchemas: FormSchema[] = [
   // {
   //   field: 'fac',
   //   component: 'InputGroup',

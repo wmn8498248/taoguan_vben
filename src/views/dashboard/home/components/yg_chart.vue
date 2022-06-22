@@ -180,7 +180,7 @@
         top: 35,
         right: 30, //可设定图例在左、右、居中
         icon: 'none',
-        padding: [0, 2]
+        itemWidth: 1,
       },
       series: [
         {

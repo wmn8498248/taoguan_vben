@@ -6,6 +6,8 @@
         v-if="deviceListData.length > 0"
         class="!md:mr-4"
         @my-click="sensorsNum"
+        @fieldsClick="fieldsClick"
+        :fieldsList="fieldsListData"
         :deviceList="deviceListData"
       ></YgList>
       <YgChart
@@ -24,7 +26,7 @@
         :historyList="historyListData"
         :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
         :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
-      /> 
+      />
     </div>
   </div>
   <div class="md:w-1/4 w-full md:mt-0 mt-4" style="min-height: 50vh">
@@ -56,6 +58,8 @@
     newHomeRefrshApi,
     newHomeDataListApi,
     newHomeAlarmListApi,
+    msgFieldsAllApi,
+    msgFieldsUpdateApi,
   } from '/@/api/dashboard/dashboard';
 
   export default defineComponent({
@@ -69,21 +73,26 @@
     },
 
     setup() {
+      let fieldsListData = ref([]);
       let todayMvData = ref([]);
       let realTimeListData = ref([]);
       let historyListData = ref([]);
       let deviceListData = ref([]);
       let alarmPageData = ref({ list: [] });
       let boxStatus = ref(0);
-      let timer;
-      let timerHome;
+      let timer: NodeJS.Timeout;
+      let timerHome: NodeJS.Timeout;
       let pages = {
         page: 1,
         limit: 9999,
       };
       let timestamp = ref(0);
+      async function fieldsClick(res) {
+        const { code } = await msgFieldsUpdateApi(res);
+        console.log(code, 'code__');
+      }
 
-      async function sensorsNum(index) {
+      async function sensorsNum(index: number) {
         boxStatus.value = index;
         let refreshData = {
           deviceUniqueId: deviceListData.value[index]['deviceUniqueId'],
@@ -123,6 +132,9 @@
         const { todayMv, historyList, deviceList, realTimeList } = await newHomeApi();
         const { list } = await newHomeAlarmListApi(pages);
 
+        const { showFields } = await msgFieldsAllApi();
+
+        fieldsListData.value = showFields;
 
         if (deviceList.length > 0) {
           getRefrshApi();
@@ -133,7 +145,7 @@
         deviceListData.value = deviceList;
 
         alarmPageData.value = list;
-        
+
         realTimeListData.value = realTimeList;
       });
 
@@ -142,6 +154,7 @@
         clearInterval(timerHome);
       });
       return {
+        fieldsClick,
         timestamp,
         boxStatus,
         sensorsNum,
@@ -150,6 +163,7 @@
         historyListData,
         deviceListData,
         alarmPageData,
+        fieldsListData,
       };
     },
   });

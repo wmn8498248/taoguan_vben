@@ -3,11 +3,6 @@
     <a-card title="基本参数" :bordered="false">
       <BasicForm @register="register" />
     </a-card>
-    <a-card title="额外参数" :bordered="false" class="!mt-5">
-      <BasicForm @register="registerTask">
-  
-      </BasicForm>
-    </a-card>
 
     <template #rightFooter>
       <a-button type="primary" @click="submitAll"> 提交 </a-button>
@@ -19,7 +14,7 @@
   import { defineComponent, ref, onMounted } from 'vue';
   // import PersonTable from './PersonTable.vue';
   import { PageWrapper } from '/@/components/Page';
-  import { schemas, taskSchemas } from './data';
+  import { schemas } from './data';
   import { Card, Input, Select } from 'ant-design-vue';
   import { useRoute } from 'vue-router';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -61,35 +56,44 @@
 
       const [register, { validate, setFieldsValue }] = useForm({
         baseColProps: {
-          span: 6,
+          xl: {
+            span: 8,
+            offset: 0,
+          },
+          xxl: {
+            span: 6,
+            offset: 0,
+          },
+          // span: 6,
         },
         labelCol: {
-          span: 9,
+          span: 12,
         },
         schemas: schemas,
         showActionButtonGroup: false,
       });
 
-      const [registerTask, { validate: validateTaskForm, setFieldsValue: setFieldsValueTaskForm }] =
-        useForm({
-          baseColProps: {
-            span: 8,
-          },
-          labelCol: {
-            span: 12,
-          },
-          schemas: taskSchemas,
-          showActionButtonGroup: false,
-        });
-
       async function submitAll() {
         try {
-          const [values, taskValues] = await Promise.all([validate(), validateTaskForm()]);
-          console.log('form data:', values, taskValues);
-          let listFrom = { ...values, ...taskValues };
+          const [values] = await Promise.all([validate()]);
+          console.log('form data:', values);
+          let listFrom = { ...values };
+          if (listFrom.MontiType === 1) {
+            listFrom.isCurrent = true
+            listFrom.isPtVolt = false
+            listFrom.isBoxVolt = false
+          };
+          if (listFrom.MontiType === 2) {
+            listFrom.isCurrent = false
+            listFrom.isPtVolt = true
+            listFrom.isBoxVolt = false
+          };
+          if (listFrom.MontiType === 3) {
+            listFrom.isCurrent = false
+            listFrom.isPtVolt = false
+            listFrom.isBoxVolt = true
+          };
           if (userId.value == 'new') {
-            console.log(userId.value, '__________userId.value1 ');
-
             const { code } = await deviceBusinessSave(listFrom);
             if (code == 0) {
               createMessage.success('创建成功');
@@ -110,14 +114,17 @@
       }
       async function getHomeListApi() {
         const { bushingDeviceBusiness } = await deviceBusinessInfo({ id: userId.value });
+
+        if (bushingDeviceBusiness.isCurrent) bushingDeviceBusiness.MontiType = 1;
+        if (bushingDeviceBusiness.isPtVolt) bushingDeviceBusiness.MontiType = 2;
+        if (bushingDeviceBusiness.isBoxVolt) bushingDeviceBusiness.MontiType = 3;
         setFieldsValue(bushingDeviceBusiness);
-        setFieldsValueTaskForm(bushingDeviceBusiness);
       }
 
       onMounted(async () => {
         if (userId.value != 'new') getHomeListApi();
       });
-      return { userId, currentKey, goBack, register, registerTask, submitAll };
+      return { userId, currentKey, goBack, register, submitAll };
     },
   });
 </script>
