@@ -107,13 +107,7 @@
           },
         ],
         legend: {
-          data: [
-            props.isBoxVolt ? '电压(kV)' : '电流（mA）',
-            '相对电容量',
-            '相对介损',
-            '电容量',
-            '介损',
-          ],
+          data: [props.isBoxVolt ? '电压(kV)' : '电流（mA）'],
           textStyle: {
             color: '#f1a89f',
           },
@@ -128,34 +122,6 @@
             }),
             type: 'line',
             name: props.isBoxVolt ? '电压(kV)' : '电流（mA）',
-          },
-          {
-            data: props.historyList.map((ele: { relativelyCap: any }) => {
-              return ele.relativelyCap;
-            }),
-            type: 'line',
-            name: '相对电容量',
-          },
-          {
-            data: props.historyList.map((ele: { relativelyLoss: any }) => {
-              return ele.relativelyLoss;
-            }),
-            type: 'line',
-            name: '相对介损',
-          },
-          {
-            data: props.historyList.map((ele: { cap: any }) => {
-              return ele.cap;
-            }),
-            type: 'line',
-            name: '电容量',
-          },
-          {
-            data: props.historyList.map((ele: { loss: any }) => {
-              return ele.loss;
-            }),
-            type: 'line',
-            name: '介损',
           },
         ],
       });
@@ -240,21 +206,15 @@
           height: 12,
         },
       ],
-      legend: {
-        data: [
-          props.isBoxVolt ? '电压(kV)' : '电流（mA）',
-          '相对电容量',
-          '相对介损',
-          '电容量',
-          '介损',
-        ],
-        textStyle: {
-          color: '#f1a89f',
-        },
-        top: 35,
-        right: 30, //可设定图例在左、右、居中
-        icon: 'line',
-      },
+      // legend: {
+      //   data: [props.isBoxVolt ? '电压(kV)' : '电流（mA）'],
+      //   textStyle: {
+      //     color: '#f1a89f',
+      //   },
+      //   top: 35,
+      //   right: 30, //可设定图例在左、右、居中
+      //   icon: 'line',
+      // },
       series: [
         {
           data: props.historyList.map((ele) => {
@@ -262,34 +222,6 @@
           }),
           type: 'line',
           name: props.isBoxVolt ? '电压(kV)' : '电流（mA）',
-        },
-        {
-          data: props.historyList.map((ele: { relativelyCap: any }) => {
-            return ele.relativelyCap;
-          }),
-          type: 'line',
-          name: '相对电容量',
-        },
-        {
-          data: props.historyList.map((ele: { relativelyLoss: any }) => {
-            return ele.relativelyLoss;
-          }),
-          type: 'line',
-          name: '相对介损',
-        },
-        {
-          data: props.historyList.map((ele: { cap: any }) => {
-            return ele.cap;
-          }),
-          type: 'line',
-          name: '电容量',
-        },
-        {
-          data: props.historyList.map((ele: { loss: any }) => {
-            return ele.loss;
-          }),
-          type: 'line',
-          name: '介损',
         },
       ],
     });
@@ -308,7 +240,7 @@
       line-height: 40px;
       padding-left: 20px;
       border-bottom: 1px solid #041554;
-      // justify-content: center;
+      justify-content: center;
       align-items: center;
       span {
         padding-left: 10px;

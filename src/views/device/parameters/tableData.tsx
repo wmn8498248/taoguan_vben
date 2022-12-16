@@ -10,7 +10,7 @@ export function getBasicColumns(): BasicColumn[] {
       dataIndex: 'boardId',
       width: 100,
     },
-   
+
     {
       dataIndex: 'name',
       title: '套管名称',
@@ -51,9 +51,8 @@ export function getBasicColumns(): BasicColumn[] {
         return h(Tag, { color: color }, () => text);
       },
       width: 120,
-      
     },
-   
+
     {
       dataIndex: 'isPtVolt',
       title: 'pt相电压(是/否)',

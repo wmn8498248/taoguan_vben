@@ -10,7 +10,11 @@ export interface RoleInfo {
   roleName: string;
   value: string;
 }
-
+export interface UserInfo{
+  enabled: boolean;
+  userId: number;
+  username: string;
+}
 /**
  * @description: Login interface return value
  */

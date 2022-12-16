@@ -159,6 +159,13 @@ export const usePermissionStore = defineStore({
         case PermissionModeEnum.ROUTE_MAPPING:
           routes = filter(asyncRoutes, routeFilter);
           routes = routes.filter(routeFilter);
+          const userStore = useUserStore();
+          console.log(userStore.getUserInfo['user']['username'], '________________12');
+
+          if (userStore.getUserInfo['user']['username'] !== 'ygwl_admin') {
+            routes[3].children.splice(0, 3);
+          }
+
           const menuList = transformRouteToMenu(routes, true);
           routes = filter(routes, routeRemoveIgnoreFilter);
           routes = routes.filter(routeRemoveIgnoreFilter);
@@ -169,7 +176,8 @@ export const usePermissionStore = defineStore({
           this.setFrontMenuList(menuList);
           // Convert multi-level routing to level 2 routing
           routes = flatMultiLevelRoutes(routes);
-          console.log(routes, "routes")
+          console.log(routes, 'routes');
+          console.log(menuList, 'menuList');
           break;
 
         //  If you are sure that you do not need to do background dynamic permissions, please comment the entire judgment below

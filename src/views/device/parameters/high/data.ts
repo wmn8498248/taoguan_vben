@@ -32,21 +32,29 @@ const storeTypeOptions: LabelValueOptions = [
 ];
 
 const CalculationTypeOptions: LabelValueOptions = [
+  // {
+  //   label: '绝对法',//国标法相对法
+  //   value: 1,
+  // },
   {
-    label: '国标法相对法',
-    value: 1,
-  },
-  {
-    label: '自定义法相对法',
+    label: '相对法(国标)',//自定义法相对法
     value: 2,
   },
   {
-    label: '自定义法预制电容量',
+    label: '相对法(自定义)',//自定义法预制电容量
     value: 3,
   },
 ];
 
 export const schemas: FormSchema[] = [
+  // {
+  //     field: 'fac',
+  //     component: 'InputGroup',
+  //     label: '收款账户',
+  //     required: true,
+  //     defaultValue: 'test@example.com',
+  //     slot: 'fac',
+  //   },
   {
     field: 'id',
     component: 'InputNumber',
@@ -62,6 +70,7 @@ export const schemas: FormSchema[] = [
     field: 'boardId',
     component: 'Input',
     label: '板子编号',
+    slot: 'boardId',
   },
   {
     field: 'threePhase',
@@ -76,6 +85,7 @@ export const schemas: FormSchema[] = [
     component: 'InputNumber',
     label: 'bushingId',
     defaultValue: null,
+    slot: 'boardId',
   },
   {
     field: 'sortNum',
@@ -421,7 +431,7 @@ export const schemas: FormSchema[] = [
     label: '国标法相对计算参考顺序',
 
     ifShow: ({ values }) => {
-      return values.MontiType === 1 && values.calculationMethod == 1;
+      return values.MontiType === 1 && values.calculationMethod == 2;
     },
     defaultValue: null,
     colProps: {
@@ -440,16 +450,16 @@ export const schemas: FormSchema[] = [
     component: 'InputNumber',
     label: '自定义法相对计算分组',
     ifShow: ({ values }) => {
-      return values.MontiType === 1 && values.calculationMethod == 2;
+      return values.MontiType === 1 && values.calculationMethod == 3;
     },
     defaultValue: null,
     colProps: {
       xl: {
-        span: 24,
+        span: 8,
         offset: 0,
       },
       xxl: {
-        span: 24,
+        span: 6,
         offset: 0,
       },
     },
@@ -485,7 +495,7 @@ export const schemas: FormSchema[] = [
       return (
         values.MontiType !== 2 &&
         !values.isBoxVolt &&
-        values.calculationMethod == '3' &&
+        values.calculationMethod == 3 &&
         values.isUseCapInitial
       );
     },

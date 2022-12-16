@@ -5,7 +5,7 @@
         autoFocusFirstItem
         :labelWidth="200"
         :schemas="schemas"
-        :actionColOptions="{ span: 24 }"
+        :actionColOptions="{ span: 24 }" 
         @submit="handleSubmit"
         @reset="handleReset"
       >

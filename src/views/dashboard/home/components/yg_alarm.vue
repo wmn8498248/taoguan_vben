@@ -3,7 +3,7 @@
     <div class="virtual-alarm-title">
       <Icon icon="alarm|svg" :size="23" />
       <span>设备报警({{ alarmData?.length }})</span>
-      <span style="flex: 1; text-align: right;">
+      <span>
         <router-link to="/device/alarm">
           <a-tag class="tag"> 更多 </a-tag>
         </router-link></span
@@ -124,6 +124,7 @@
       line-height: 40px;
       padding-left: 20px;
       border-bottom: 1px solid #041554;
+      justify-content: center;
       align-items: center;
       span {
         padding-left: 10px;

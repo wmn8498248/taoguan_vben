@@ -12,7 +12,7 @@
           </a-input-group>
         </template>
       </BasicForm>
-    </div>
+    </div> 
     <a-divider />
     <h3>说明</h3>
     <h4>转账到支付宝账户</h4>

@@ -1,121 +1,82 @@
 <template>
   <div class="p-4">
-    <BasicTable @register="registerTable" @edit-change="onEditChange">
-      <template #toolbar>
-        <Tag>采集单元：</Tag>
-        <a-select
-          v-model:value="selectValue"
-          show-search
-          placeholder="请输入采集单元"
-          style="width: 200px"
-          @change="handleChange"
+    <CollapseContainer class="mt-4" title="基本设置">
+      <!-- <Tag>采集单元：</Tag> -->
+      <a-select
+        v-model:value="selectValue"
+        show-search
+        placeholder="请输入采集单元"
+        style="width: 200px"
+        @change="handleChange"
+      >
+        <a-select-option
+          v-for="(item, index) in deviceListData"
+          :key="index"
+          :value="item.name"
+          :label="item.boardId"
         >
-          <a-select-option
-            v-for="(item, index) in deviceListData"
-            :key="index"
-            :value="item.name"
-            :label="item.boardId"
-          >
-          </a-select-option>
-        </a-select>
-        <a-button size="small" type="primary" @click="handleReloadCurrent">
-          获取采集单元录波列表
-        </a-button>
-        <a-button size="small" type="primary" @click="handleReload">
-          更新当前已获得的录波列表
-        </a-button>
-      </template>
-      <template #action="{ record }">
-        <TableAction :actions="createActions(record)" />
-      </template>
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'name'">
-          <a>
-            {{ record.name }}
-          </a>
-        </template>
+        </a-select-option>
+      </a-select>
+      <!-- type="primary" -->
+      <a-button class="ml-4 mr-2" preIcon="mdi:page-next-outline" @click="recordReset"> 重置采集单元录波列表 </a-button>
+      <a-button class="mr-2" preIcon="ion:barcode-outline" @click="recordGet">
+        获取采集单元录波列表
+      </a-button>
+      <a-button class="mr-2" preIcon="ion:barcode-outline" @click="recordRead">
+        获取redis已读取到的录波列表
+      </a-button>
+    </CollapseContainer>
 
-        <template v-if="column.key === 'tags'">
-          <span>
-            <a-select v-model:value="idxValue" style="width: 200px">
-              <a-select-option
-                v-for="(item, index) in record.idx"
-                :key="index"
-                :value="item"
-                :label="item"
-              >
-              </a-select-option>
-            </a-select>
-          </span>
-        </template>
-        <template v-else-if="column.key === 'timeLabels'">
-          <span>
-            <a-select v-model:value="timeLabelsValue" style="width: 200px">
-              <a-select-option
-                v-for="(item, index) in record.timeLabels"
-                :key="index"
-                :value="item.second"
-                :label="index"
-              >
-              </a-select-option>
-            </a-select>
-          
-          </span>
-        </template>
-      </template>
-    </BasicTable>
+    <CollapseContainer class="mt-4" title="板子信息" v-if="dataSourcTable !== null">
+      <div class="flex justify-items-center flex-wrap">
+        <div class="w-full mt-4"><Tag>板子id:</Tag>{{ dataSourcTable.boardId }}</div>
+        <div class="w-full mt-4">
+          <Tag>fft: </Tag>
+          <a-select v-model:value="fftValue" style="width: 200px">
+            <a-select-option
+              v-for="(item, index) in dataSourcTable.fftList"
+              :key="index"
+              :value="item"
+              :label="item"
+            >
+            </a-select-option>
+          </a-select>
+        </div>
+        <div class="w-full mt-4">
+          <Tag>bushingId: </Tag>
+          <a-select v-model:value="bushingId" style="width: 200px">
+            <a-select-option v-for="(item, index) in 8" :key="index" :value="index" :label="index">
+            </a-select-option>
+          </a-select>
+        </div>
+        <div class="w-full mt-4 mb-4">
+          <a-button class="" type="primary" preIcon="mdi:air-filter" @click="handleEdit"> 下发读取波形命令 </a-button>
+        </div>
+      </div>
+    </CollapseContainer>
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, reactive, onMounted } from 'vue';
-  import {
-    BasicTable,
-    useTable,
-    TableAction,
-    BasicColumn,
-    ActionItem,
-    EditRecordRow,
-  } from '/@/components/Table';
+  import { defineComponent, ref, onMounted } from 'vue';
 
   import {
     deviceBusinessList,
     recordWaveGet,
     recordWaveRead,
     recordWaveOut,
+    recordWaveReset,
   } from '/@/api/device/manage';
+
+  import { CollapseContainer } from '/@/components/Container';
 
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Tag, Select } from 'ant-design-vue';
+import { nullLiteral } from '@babel/types';
 
-  const columns: BasicColumn[] = [
-    {
-      title: '板子id',
-      dataIndex: 'boardId',
-      fixed: 'left',
-    },
-    {
-      dataIndex: 'usTrig',
-      title: 'usTrig',
-    },
-    {
-      dataIndex: 'frNum',
-      title: '周波数量',
-    },
-    {
-      dataIndex: 'idx',
-      title: '周波下标索引列表',
-      key: 'tags',
-    },
-    {
-      dataIndex: 'timeLabels',
-      title: '周波时间索引',
-      key: 'timeLabels',
-    },
-  ];
   export default defineComponent({
     components: {
-      BasicTable,
-      TableAction,
+      CollapseContainer,
+
       Tag,
       [Select.name]: Select,
       ASelectOption: Select.Option,
@@ -123,43 +84,30 @@
     setup() {
       let deviceListData = ref();
 
-      let dataSourcTable = reactive([]);
+      let dataSourcTable = ref<any>(null);
       let selectValue = ref<string | undefined>(undefined);
-      let idxValue = ref<string | undefined>(undefined);
-      let timeLabelsValue = ref<string | undefined>(undefined);
+      let bushingId = ref(0);
+      let fftValue = ref<string | undefined>(undefined);
       let selectValueChange = ref<string | undefined>(undefined);
 
       const { createMessage: msgTo } = useMessage();
-      const [registerTable] = useTable({
-        title: '最新录波列表',
-        dataSource: dataSourcTable,
-        searchInfo: { boardId: 'b0a0' },
-        columns: columns,
-        showIndexColumn: false,
-        showTableSetting: false, 
-        tableSetting: { fullScreen: true },
-        actionColumn: {
-          width: 160,
-          title: '操作',
-          dataIndex: 'action',
-          slots: { customRender: 'action' },
-        },
-      });
+
       // 下发读取波形命令
-      async function handleEdit(record: EditRecordRow) {
-        if (!idxValue.value) {
-          msgTo.error({ content: '请选择周波下标', key: 'saving' });
+      async function handleEdit() {
+        // if (bushingId.value !==  null) {
+        //   msgTo.error({ content: '请选择bushingId', key: 'saving' });
+        //   return;
+        // }
+
+        if (fftValue.value === undefined) {
+          msgTo.error({ content: '请选择fftValue', key: 'saving' });
           return;
         }
-        if (!timeLabelsValue.value) {
-          msgTo.error({ content: '请选择周波时间', key: 'saving' });
-          return;
-        }
-        console.log(record.boardId);
+
         let refreshData = {
-          boardId: record.boardId,
-          idx: idxValue.value,
-          second: timeLabelsValue.value,
+          boardId: dataSourcTable.boardId,
+          bushingId: bushingId.value,
+          fft: fftValue.value,
         };
         const { code, msg } = await recordWaveOut(refreshData); // 获取列表
 
@@ -167,33 +115,33 @@
           msgTo.success({ content: msg, key: 'saving' });
         }
 
-        console.log(record.boardId, 'record.boardId');
-      }
-
-      function createActions(record: EditRecordRow): ActionItem[] {
-        return [
-          {
-            label: '下发读取波形命令',
-            onClick: handleEdit.bind(null, record),
-          },
-        ];
-      }
-
-      function onEditChange({ column, value, record }) {
-        // 本例
-        if (column.dataIndex === 'id') {
-          record.editValueRefs.name4.value = `${value}`;
-        }
-        console.log(column, value, record);
+        console.log(dataSourcTable.boardId, 'record.boardId');
       }
 
       const handleChange = (value: string, option) => {
         console.log(`selected ${value}`);
         selectValueChange.value = option.label;
-        handleReload();
       };
 
-      async function handleReloadCurrent() {
+      // 重置采集单元录波列表
+      async function recordReset() {
+        if (!selectValueChange.value) {
+          msgTo.error({ content: '请选择采集单元', key: 'saving' });
+          return;
+        }
+        let refreshData = {
+          boardId: selectValueChange.value,
+        };
+
+        const { code, msg } = await recordWaveReset(refreshData); //
+
+        if (code == 0) {
+          msgTo.success({ content: msg, key: 'saving' });
+        }
+      }
+
+      // 获取采集单元录波列表
+      async function recordGet() {
         if (!selectValueChange.value) {
           msgTo.error({ content: '请选择采集单元', key: 'saving' });
           return;
@@ -209,7 +157,8 @@
         }
       }
 
-      async function handleReload() {
+      // 获取redis已读取到的录波列表
+      async function recordRead() {
         if (!selectValueChange.value) {
           msgTo.error({ content: '请选择采集单元', key: 'saving' });
           return;
@@ -217,15 +166,15 @@
         let refreshData = {
           boardId: selectValueChange.value,
         };
-        dataSourcTable = [];
-        const { list } = await recordWaveRead(refreshData); // 获取列表
 
-        if (list != undefined) {
-          dataSourcTable = list;
+        const { vo } = await recordWaveRead(refreshData); // 获取列表
+        if (vo !== undefined) {
+          dataSourcTable.value = vo;
         } else {
           msgTo.error({ content: '暂无录波列表', key: 'error' });
         }
       }
+
       async function getHomeListApi() {
         let pages = {
           page: 1,
@@ -239,17 +188,16 @@
       });
 
       return {
+        dataSourcTable,
         deviceListData,
-        handleReloadCurrent,
-        handleReload,
+        recordReset,
+        recordGet,
+        recordRead,
         selectValue,
-        idxValue,
-        timeLabelsValue,
+        bushingId,
+        fftValue,
         handleChange,
-        registerTable,
         handleEdit,
-        createActions,
-        onEditChange,
       };
     },
   });

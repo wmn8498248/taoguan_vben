@@ -4,6 +4,7 @@
       <Icon icon="total-sales|svg" :size="30" />
       <span>设备列表</span>
       <a-select
+        v-if="!userStatic"
         v-model:value="value"
         mode="multiple"
         style="flex: 0.5"
@@ -14,6 +15,7 @@
         <a-select-option
           v-for="(item, index) in options"
           :key="index"
+          :disabled="userStatic"
           :value="item.fieldsName"
           :label="item.showName"
         >
@@ -23,11 +25,11 @@
           <span style="color: #fff">+ {{ omittedValues.length }} ...</span>
         </template>
       </a-select>
-      <span style="flex: 0.1; text-align: right">
+      <!-- <span style="flex: 0.1; text-align: right">
         <router-link to="/device/parameters">
           <a-tag class="tag"> 更多 </a-tag>
         </router-link></span
-      >
+      > -->
     </div>
     <div class="virtual-scroll-content">
       <div class="virtual-scroll__item virtual-scroll_tit">
@@ -35,7 +37,7 @@
           optionsName[item]
         }}</span>
       </div>
-      <VScroll :itemHeight="41" :items="deviceList" :height="250" :width="510" :bench="50">
+      <VScroll :itemHeight="41" :items="deviceList" :height="280" width="100%" :bench="50">
         <template #default="{ item, index }">
           <div
             :class="
@@ -47,9 +49,11 @@
           >
             <span
               v-for="el in value"
-              :title="el == 'name' ? item.deviceBusiness.name : item[el] || '暂无'"
+              :title="el == 'name' ? item.deviceBusiness.name : variationChange(el, item) || '暂无'"
             >
-              {{ el == 'name' ? item.deviceBusiness.name : item[el] || '暂无' }}</span
+              {{
+                el == 'name' ? item.deviceBusiness.name : variationChange(el, item) || '暂无'
+              }}</span
             >
             <!-- <span
               ><Tag color="#669900">{{ item.deviceName }}</Tag></span
@@ -64,10 +68,12 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent, ref, reactive } from 'vue';
+  import { defineComponent, ref, reactive, computed } from 'vue';
   import { VScroll } from '/@/components/VirtualScroll/index';
   import { Icon } from '/@/components/Icon';
   import { Tag, Divider, Select } from 'ant-design-vue';
+  // import { useAppStore } from '/@/store/modules/app';
+  import { useUserStore } from '/@/store/modules/user';
 
   const data: Recordable[] = (() => {
     const arr: Recordable[] = [];
@@ -98,11 +104,20 @@
     emits: ['my-click', 'fieldsClick'],
     setup(props, contex) {
       // const { deviceList } = props;
+      const userStore = useUserStore();
 
       const options = props.fieldsList;
 
       let value = ref<any>(['name']);
       let optionsName = reactive({ name: '传感器名称' });
+
+      const userStatic = computed(() => {
+        try {
+          return userStore.getUserInfo['user']['username'] !== 'ygwl_admin';
+        } catch (error) {
+          console.log(error, 'error__');
+        }
+      });
 
       options.forEach((element: { state: boolean; fieldsName: string; showName: string }) => {
         optionsName[element.fieldsName] = element.showName;
@@ -121,13 +136,30 @@
         itemAction.value = index;
       }
       function valueChange(value: any[]) {
-        if (value.length > 4) {
-          value.splice(1, value.length - 4);
+        if (value.length > 6) {
+          value.splice(1, value.length - 6);
         }
         contex.emit('fieldsClick', value);
       }
 
+      function variationChange(el, item) {
+        const unitNum = item.deviceBusiness.isBoxVolt ? '（kV）' : '（mA）';
+        let numberTx = '';
+        if (el === 'monitorValue') {
+          if (item[el] === null) {
+            numberTx = '暂无';
+          } else {
+            numberTx = item[el] + unitNum;
+          }
+        } else {
+          numberTx = item[el];
+        }
+        return numberTx;
+      }
+
       return {
+        variationChange,
+        userStatic,
         itemAction,
         optionsName,
         props,
@@ -157,7 +189,7 @@
       padding-left: 20px;
       border-bottom: 1px solid #041554;
       align-items: center;
-      justify-items: center;
+      justify-content: center;
       ::v-deep(.ant-select-selector) {
         background-color: #0e2589;
         border: none;
@@ -171,7 +203,7 @@
       }
       span {
         padding-left: 10px;
-        flex: 0.8;
+        // flex: 0.8;
       }
     }
 

@@ -1,9 +1,10 @@
 <template>
-  <div class="w-full" style="min-height: 100vh">
+  <div class="w-full">
     <CasingCard
       v-if="deviceListData.length > 0"
       class="enter-y"
       @my-click="sensorsNum"
+      :fieldsListData="fieldsListData"
       :deviceList="deviceListData"
     />
     <YgAverage
@@ -11,6 +12,7 @@
       ref="childRef"
       class="!mt-4 enter-y"
       @my-click="getDataTime"
+      :fieldsListData="fieldsListData"
       :timestamp="timestamp"
       :historyList="historyListData"
       :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
@@ -26,6 +28,7 @@
     newListRefeshApi,
     newListHistoryRefeshApi,
     newListHistoryListApi,
+    msgFieldsAllApi,
   } from '/@/api/dashboard/dashboard';
   export default defineComponent({
     components: {
@@ -34,6 +37,8 @@
     },
 
     setup() {
+      let fieldsListData = ref([]);
+
       let timestamp = ref(0);
       let startTimeData;
       let endTimeData;
@@ -122,7 +127,7 @@
 
       async function timedTask() {
         if (deviceListData.value.length > 0) {
-          clearTimeout(timerTwo);
+          clearInterval(timerTwo);
           timerTwo = setInterval(async () => {
             let { deviceList } = await newListRefeshApi();
             deviceListData.value = deviceList;
@@ -155,6 +160,10 @@
         let { deviceList } = await newListRefeshApi();
         deviceListData.value = deviceList;
 
+         const { showFields } = await msgFieldsAllApi();
+
+        fieldsListData.value = showFields;
+
         if (deviceList.length > 0) {
           let refreshData = {
             deviceUniqueId: deviceList[boxStatus.value].deviceUniqueId,
@@ -171,6 +180,7 @@
         clearInterval(timerTwo);
       });
       return {
+        fieldsListData,
         timestamp,
         getDataTime,
         childRef,

@@ -55,50 +55,27 @@ const page: AppRouteModule = {
         title: '报警管理',
       },
       children: [
-        // {
-        //   path: 'basic',
-        //   name: 'FormBasicPage',
-        //   component: () => import('/@/views/demo/page/form/basic/index.vue'),
-        //   meta: {
-        //     title: '报警管理',
-        //   },
-        // },
-        // {
-        //   path: 'step',
-        //   name: 'FormStepPage',
-        //   component: () => import('/@/views/demo/page/form/step/index.vue'),
-        //   meta: {
-        //     title: t('routes.demo.page.formStep'),
-        //   },
-        // },
-        // {
-        //   path: 'high',
-        //   name: 'FormHightPage',
-        //   component: () => import('/@/views/demo/page/form/high/index.vue'),
-        //   meta: {
-        //     title: t('routes.demo.page.formHigh'),
-        //   },
-        // },
       ],
     },
     // =============================form end=============================
     // =============================desc start=============================
     {
-      path: 'desc',
-      name: 'DescPage',
-      component: getParentLayout('DescPage'),
+      path: 'suddenList',
+      name: 'suddenList',
+      // component: getParentLayout('DescPage'),
+      component: () => import('/@/views/device/recording/suddenList.vue'),
       meta: {
-        title: '突变相关',
+        title: '突变列表',
       },
       children: [
-        {
-          path: 'suddenList',
-          name: 'suddenList',
-          component: () => import('/@/views/device/recording/suddenList.vue'),
-          meta: {
-            title: '突变列表',
-          },
-        },
+        // {
+        //   path: 'suddenList',
+        //   name: 'suddenList',
+        //   component: () => import('/@/views/device/recording/suddenList.vue'),
+        //   meta: {
+        //     title: '突变列表',
+        //   },
+        // },
         // {
         //   path: 'high',
         //   name: 'DescHighPage',
@@ -110,34 +87,55 @@ const page: AppRouteModule = {
       ],
     },
     // =============================desc end=============================
-
-    // =============================result start=============================
     {
-      path: 'result',
-      name: 'ResultPage',
-      component: getParentLayout('ResultPage'),
+      path: 'recordingNew',
+      name: 'recordingNew',
+      // component: getParentLayout('DescPage'),
+      component: () => import('/@/views/device/recording/recordingNew.vue'),
       meta: {
-        title: '录波相关',
+        title: '查询最新录波列表',
       },
       children: [
-        {
-          path: 'recordingNew',
-          name: 'recordingNew',
-          component: () => import('/@/views/device/recording/recordingNew.vue'),
-          meta: {
-            title: '查询最新录波列表',
-          },
-        },
-        {
-          path: 'recordingList',
-          name: 'recordingList',
-          component: () => import('/@/views/device/recording/recordingList.vue'),
-          meta: {
-            title: '本地已保存录波列表',
-          },
-        },
       ],
     },
+    {
+      path: 'recordingList',
+      name: 'recordingList',
+      // component: getParentLayout('DescPage'),
+      component: () => import('/@/views/device/recording/recordingList.vue'),
+      meta: {
+        title: '本地已保存录波列表',
+      },
+      children: [
+      ],
+    },
+    // =============================result start=============================
+    // {
+    //   path: 'result',
+    //   name: 'ResultPage',
+    //   component: getParentLayout('ResultPage'),
+    //   meta: {
+    //     title: '录波相关',
+    //   },
+    //   children: [
+    //     {
+    //       path: 'recordingNew',
+    //       name: 'recordingNew',
+    //       component: () => import('/@/views/device/recording/recordingNew.vue'),
+    //       meta: {
+    //         title: '查询最新录波列表',
+    //       },
+    //     },
+    //     {
+    //       path: 'recordingList',
+    //       name: 'recordingList',
+    //       component: () => import('/@/views/device/recording/recordingList.vue'),
+    //       meta: {
+    //         title: '本地已保存录波列表',
+    //       },
+    //     },
+    //   ],
+    // },
   ],
 };
 

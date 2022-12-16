@@ -91,9 +91,9 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params;
         const data = await loginApi(loginParams, mode);
-        console.log(data,"_________123 ")
+        console.log(data, '_________123 ');
         const { token } = data;
-          
+
         // save token
         this.setToken(token);
         return this.afterLoginAction(goHome);
@@ -105,21 +105,28 @@ export const useUserStore = defineStore({
       if (!this.getToken) return null;
       // 获取用户信息
       const userInfo = await this.getUserInfoAction();
-      
+
       //加载路由
       const sessionTimeout = this.sessionTimeout;
+      console.log(sessionTimeout, 'sessionTimeout___');
+
       if (sessionTimeout) {
         this.setSessionTimeout(false);
       } else {
         const permissionStore = usePermissionStore();
+
         if (!permissionStore.isDynamicAddedRoute) {
-          const routes = await permissionStore.buildRoutesAction();
+          const routes = await permissionStore.buildRoutesAction(); // 获取路由
           routes.forEach((route) => {
             router.addRoute(route as unknown as RouteRecordRaw);
           });
+
+
           router.addRoute(PAGE_NOT_FOUND_ROUTE as unknown as RouteRecordRaw);
+
           permissionStore.setDynamicAddedRoute(true);
         }
+
         goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME));
       }
       return userInfo;

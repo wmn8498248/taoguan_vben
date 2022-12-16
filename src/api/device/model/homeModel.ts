@@ -5,6 +5,10 @@ export interface getTableModel<> {
   bushingDeviceBusiness?: any;
   page?: any;
   list?: [];
+  vo?: {
+    boardId: string,
+    fftList: []
+  }
 }
 
 export interface getWaveModel<> {

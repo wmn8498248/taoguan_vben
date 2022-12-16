@@ -42,6 +42,8 @@
     timestamp: { type: Number, default: 0 },
     deviceName: { type: String },
     historyList: { type: null, default: [] },
+    fieldsListData: { type: null, default: [] },
+
     // : {
     //   fftId: String, //时间；横轴
     //   currentRms: Number, //电流(mA)；纵轴
@@ -66,10 +68,12 @@
       const height = computed(() => props.height);
       let deviceName = computed(() => props.deviceName);
       let timestamp = computed(() => props.timestamp);
+      const fieldsAll: any = computed(() => props.fieldsListData);
 
       let dataTimeObj: [string, string];
       let switchTime: Ref<Boolean> = ref(true);
       let valueTime = ref();
+
       // reactive
       const onRangeChange = (value: [Dayjs, Dayjs], dateString: [string, string]) => {
         console.log(value);
@@ -95,7 +99,37 @@
       }
 
       async function onRangeChart(resData, resDevice) {
-        // console.log(resDevice, 'res____________');
+        console.log(resData, 'resData————————————————————————————');
+        let fieldsNameList = [];
+        let showNameList = [];
+
+        for (let index = 0; index < fieldsAll.value.length; index++) {
+          const element = fieldsAll.value[index];
+          if (element.state) {
+            showNameList.push(
+              element.showName === '数值'
+                ? resDevice['isBoxVolt']
+                  ? '电压(kV)'
+                  : '电流（mA）'
+                : element.showName,
+            );
+            fieldsNameList.push({
+              data: resData.map((ele: any) => {
+                return ele[element.fieldsName];
+              }),
+              type: 'line',
+              name:
+                element.showName === '数值'
+                  ? resDevice['isBoxVolt']
+                    ? '电压(kV)'
+                    : '电流（mA）'
+                  : element.showName,
+            });
+          }
+        }
+        console.log(showNameList, ' ______________1');
+        console.log(fieldsNameList, '__________2');
+
         setOptions({
           title: {
             text: resDevice['name'],
@@ -172,63 +206,41 @@
             },
           ],
           legend: {
-            data: [
-              resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
-              '相对电容量',
-              '相对介损',
-              '电容量',
-              '介损',
-            ],
+            // data: [
+            //   resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
+            //   '相对电容量',
+            //   '相对介损',
+            //   '电容量',
+            //   '介损',
+            // ],
+            data: showNameList,
             textStyle: {
               color: '#f1a89f',
             },
             top: 20,
             right: 30, //可设定图例在左、右、居中
-            icon: 'line',
+            icon: 'circle',
           },
-          series: [
-            {
-              data: resData.map((ele: { monitorValue: any }) => {
-                return ele.monitorValue;
-              }),
-              type: 'line',
-              name: resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
-            },
-            {
-              data: resData.map((ele: { relativelyCap: any }) => {
-                return ele.relativelyCap;
-              }),
-              type: 'line',
-              name: '相对电容量',
-            },
-            {
-              data: resData.map((ele: { relativelyLoss: any }) => {
-                return ele.relativelyLoss;
-              }),
-              type: 'line',
-              name: '相对介损',
-            },
-            {
-              data: resData.map((ele: { cap: any }) => {
-                return ele.cap;
-              }),
-              type: 'line',
-              name: '电容量',
-            },
-            {
-              data: resData.map((ele: { loss: any }) => {
-                return ele.loss;
-              }),
-              type: 'line',
-              name: '介损',
-            },
-          ],
+          series: fieldsNameList,
         });
       }
 
       watch(
         timestamp,
         () => {
+          let fieldsNameList = [];
+
+          for (let index = 0; index < fieldsAll.value.length; index++) {
+            const element = fieldsAll.value[index];
+            if (element.state) {
+              fieldsNameList.push({
+                data: props.historyList.map((ele: any) => {
+                  return ele[element.fieldsName];
+                }),
+              });
+            }
+          }
+
           setOptions(
             {
               xAxis: {
@@ -236,33 +248,7 @@
                   return ele.fftId.replace(' ', '\n');
                 }),
               },
-              series: [
-                {
-                  data: props.historyList.map((ele: { monitorValue: any }) => {
-                    return ele.monitorValue;
-                  }),
-                },
-                {
-                  data: props.historyList.map((ele: { relativelyCap: any }) => {
-                    return ele.relativelyCap;
-                  }),
-                },
-                {
-                  data: props.historyList.map((ele: { relativelyLoss: any }) => {
-                    return ele.relativelyLoss;
-                  }),
-                },
-                {
-                  data: props.historyList.map((ele: { cap: any }) => {
-                    return ele.cap;
-                  }),
-                },
-                {
-                  data: props.historyList.map((ele: { loss: any }) => {
-                    return ele.loss;
-                  }),
-                },
-              ],
+              series: fieldsNameList,
             },
             false,
           );

@@ -13,8 +13,13 @@ enum Api {
   RECORD_WAVE_OUT = '/record/wave/out',
   RECORD_WAVE_LIST = '/record/wave/list',
   RECORD_WAVE_INFO = '/record/wave/info',
-}
+  RECORD_WAVE_RESET = '/record/wave/reset',
 
+}
+export const recordWaveReset = (params: boardIdParams) =>
+  defHttp.get<getTableModel>({ url: Api.RECORD_WAVE_RESET, params });
+
+  
 export const recordWaveGet = (params: boardIdParams) =>
   defHttp.get<getTableModel>({ url: Api.RECORD_WAVE_GET, params });
 export const recordWaveRead = (params: boardIdParams) =>

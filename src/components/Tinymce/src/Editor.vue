@@ -63,7 +63,7 @@
     onDeactivated,
     onBeforeUnmount,
   } from 'vue';
-  import ImgUpload from './ImgUpload.vue';
+  import ImgUpload from './ImgUpload.vue'; 
   import { toolbar, plugins } from './tinymce';
   import { buildShortUUID } from '/@/utils/uuid';
   import { bindHandlers } from './helper';

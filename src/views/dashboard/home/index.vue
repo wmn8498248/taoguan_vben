@@ -4,7 +4,7 @@
       <YgHead @visiblechange="openTargetModal" />
     </div>
     <!-- mt-5 md:mt-10 -->
-    <div class="home-index-content md:flex enter-y p-2 md:p-4">
+    <div class="home-index-content enter-y p-2 md:p-4">
       <component :is="currentModal"></component>
     </div>
   </div>
@@ -42,7 +42,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   &-content{
-    margin-top: 30px;
+    margin-top: 50px;
     height: calc(100% - 85px);
     align-items: center;
   }

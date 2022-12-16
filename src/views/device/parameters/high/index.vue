@@ -1,7 +1,18 @@
 <template>
   <PageWrapper class="high-form p-4" :title="`设备:` + userId" @back="goBack">
     <a-card title="基本参数" :bordered="false">
-      <BasicForm @register="register" />
+      <BasicForm @register="register">
+        <template #boardId="{ model, field }">
+          <a-input :readonly="userId !== 'new'" v-model:value="model[field]" placeholder="请输入" />
+        </template>
+        <template #bushingId="{ model, field }">
+          <a-input-number
+            :readonly="userId !== 'new'"
+            v-model:value="model[field]"
+            placeholder="请输入"
+          />
+        </template>
+      </BasicForm>
     </a-card>
 
     <template #rightFooter>
@@ -79,21 +90,22 @@
           console.log('form data:', values);
           let listFrom = { ...values };
           if (listFrom.MontiType === 1) {
-            listFrom.isCurrent = true
-            listFrom.isPtVolt = false
-            listFrom.isBoxVolt = false
-          };
+            listFrom.isCurrent = true;
+            listFrom.isPtVolt = false;
+            listFrom.isBoxVolt = false;
+          }
           if (listFrom.MontiType === 2) {
-            listFrom.isCurrent = false
-            listFrom.isPtVolt = true
-            listFrom.isBoxVolt = false
-          };
+            listFrom.isCurrent = false;
+            listFrom.isPtVolt = true;
+            listFrom.isBoxVolt = false;
+          }
           if (listFrom.MontiType === 3) {
-            listFrom.isCurrent = false
-            listFrom.isPtVolt = false
-            listFrom.isBoxVolt = true
-          };
+            listFrom.isCurrent = false;
+            listFrom.isPtVolt = false;
+            listFrom.isBoxVolt = true;
+          }
           if (userId.value == 'new') {
+            listFrom['deviceUniqueId'] = Number(new Date());
             const { code } = await deviceBusinessSave(listFrom);
             if (code == 0) {
               createMessage.success('创建成功');

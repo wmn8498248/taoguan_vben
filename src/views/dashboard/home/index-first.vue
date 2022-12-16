@@ -1,47 +1,43 @@
 <template>
-  <div class="md:w-3/4 w-full !md:mr-4" style="min-height: 50vh">
-    <div class="md:flex enter-y">
-      <!-- {{deviceListData}} -->
+  <div class="md:flex">
+    <div class="md:w-3/5 w-full !md:mr-4">
       <YgList
-        v-if="deviceListData.length > 0"
-        class="!md:mr-4"
-        @my-click="sensorsNum"
-        @fieldsClick="fieldsClick"
-        :fieldsList="fieldsListData"
-        :deviceList="deviceListData"
-      ></YgList>
-      <YgChart
-        v-if="deviceListData.length > 0"
-        class="mt-4 md:mt-0 w-full"
-        :timestamp="timestamp"
-        :historyList="realTimeListData"
-        :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
-        :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
-      />
+          v-if="deviceListData.length > 0"
+          @my-click="sensorsNum"
+          @fieldsClick="fieldsClick"
+          :fieldsList="fieldsListData"
+          :deviceList="deviceListData"
+        ></YgList>
     </div>
-    <div class="w-full enter-y">
-      <YgChartNow
-        v-if="deviceListData.length > 0"
-        class="!mt-4 enter-y"
-        :historyList="historyListData"
-        :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
-        :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
-      />
+    <div class="md:w-2/5 w-full">
+      <YgChart
+          v-if="deviceListData.length > 0"
+          class="mt-4 md:mt-0 w-full"
+          :timestamp="timestamp"
+          :historyList="realTimeListData"
+          :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
+          :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
+        />
     </div>
   </div>
-  <div class="md:w-1/4 w-full md:mt-0 mt-4" style="min-height: 50vh">
-    <YgBox v-if="deviceListData.length > 0" :deviceList="todayMvData[boxStatus]"></YgBox>
-    <YgAlarm
-      v-if="alarmPageData && deviceListData.length"
-      class="md:mt-4 mt-4"
-      :alarmPage="alarmPageData"
-    ></YgAlarm>
-    <!-- <YgAlarm class="md:mt-4 mt-4"></YgAlarm> -->
-    <YgRadar
-      v-if="deviceListData.length > 0"
-      class="md:mt-4 mt-4"
-      :deviceList="todayMvData[boxStatus]"
-    ></YgRadar>
+  <div class="md:flex">
+    <div class="md:w-3/5 w-full !md:mr-4">
+      <YgChartNow
+          v-if="deviceListData.length > 0"
+          class="!mt-4 enter-y"
+          :historyList="historyListData"
+          :isBoxVolt="deviceListData[boxStatus]['deviceBusiness']['isBoxVolt']"
+          :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
+        />
+    </div>
+    <div class="md:w-2/5 w-full md:mt-0 !mt-4">
+      <YgBox v-if="deviceListData.length > 0" :deviceList="todayMvData[boxStatus]"></YgBox>
+      <YgAlarm
+        v-if="alarmPageData && deviceListData.length"
+        class="md:mt-4 mt-4"
+        :alarmPage="alarmPageData"
+      ></YgAlarm>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -104,7 +100,7 @@
       }
 
       async function getRefrshApi() {
-        clearTimeout(timer);
+        clearInterval(timer);
         timer = setInterval(async () => {
           let refreshData = {
             deviceUniqueId: deviceListData.value[boxStatus.value]['deviceUniqueId'],
@@ -115,17 +111,17 @@
         }, 5000);
       }
       async function getHomeListApi() {
-        clearTimeout(timerHome);
+        clearInterval(timerHome);
         timerHome = setInterval(async () => {
           const { todayMv, historyList, deviceList, realTimeList } = await newHomeApi();
-          const { page } = await newHomeAlarmListApi(pages);
+          const { list } = await newHomeAlarmListApi(pages);
 
           todayMvData.value = todayMv;
           historyListData.value = historyList;
           deviceListData.value = deviceList;
-          alarmPageData.value = page.list;
+          alarmPageData.value = list;
           realTimeListData.value = realTimeList;
-        }, 300000);
+        }, 60000);
       }
       onMounted(async () => {
         getHomeListApi();
