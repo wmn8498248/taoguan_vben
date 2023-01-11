@@ -1,7 +1,7 @@
 <template>
   <div
     class="md:flex flex-wrap box-lists"
-    :style="listHeight ? 'height: 350px;' : 'height: auto;'"
+    :style="listHeight ? 'max-height: 350px;' : 'height: auto;'"
   >
     <div
       :class="itemAction == index ? 'box-item box-item-action' : 'box-item'"
@@ -109,6 +109,7 @@
 <style lang="less" scoped>
 
   .list-expand {
+    margin-top: 20px;
     text-align: center;
     color: #fff;
     line-height: 40px;
@@ -126,7 +127,7 @@
     }
   }
   .box-lists {
-    height: 350px;
+    max-height: 350px;
     overflow: hidden;
     justify-content: center;
     .conut-tx {

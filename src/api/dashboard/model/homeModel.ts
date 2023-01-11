@@ -21,6 +21,7 @@ export interface getHomeModel<> {
   deviceList?: any;
   historyList?: any;
   realTimeList?: any;
+  console?: any;
   showFields?: any;
   todayMv?: any;
   page?: any;

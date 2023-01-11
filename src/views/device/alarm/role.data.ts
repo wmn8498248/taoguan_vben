@@ -33,6 +33,7 @@ export const columns: BasicColumn[] = [
         '零序电流过高2',
         '电容量超限',
         '介损超限',
+        '通讯中断',
       ];
       return dataList[record.alarmType];
     },

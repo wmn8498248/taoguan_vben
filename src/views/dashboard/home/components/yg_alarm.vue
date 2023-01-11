@@ -1,6 +1,8 @@
 <template>
   <div class="virtual-alarm-wrap">
     <div class="virtual-alarm-title">
+      <slot></slot>
+
       <Icon icon="alarm|svg" :size="23" />
       <span>设备报警({{ alarmData?.length }})</span>
       <span>
@@ -20,7 +22,7 @@
                 >
                 <div class="title"
                   >报警值：<a-tag class="tag" :color="alarmColor[item.alarmLevel]">{{
-                    item.monitorValue
+                    item.monitorValue ? item.monitorValue : '暂无'
                   }}</a-tag></div
                 >
                 <div class="title"
@@ -126,6 +128,7 @@
       border-bottom: 1px solid #041554;
       justify-content: center;
       align-items: center;
+      position: relative;
       span {
         padding-left: 10px;
       }

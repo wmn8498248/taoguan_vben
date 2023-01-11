@@ -19,7 +19,7 @@
     </template>
     <Dropdown
       :trigger="['hover']"
-      :dropMenuList="getDropdownList"
+      :dropMenuList="getDropdownList" 
       popconfirm
       v-if="dropDownActions && getDropdownList.length > 0"
     >

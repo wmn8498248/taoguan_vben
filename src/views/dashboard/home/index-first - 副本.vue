@@ -1,18 +1,15 @@
 <template>
-  <audio id="audioMc" hidden="true" controls>
-    <source src="../../../assets/images/alarm2.mp3" type="audio/mp3" />
-  </audio>
-  <div class="md:flex">
-    <div class="md:w-3/5 w-full !md:mr-4">
+  <div class="md:w-3/4 w-full !md:mr-4">
+    <div class="md:flex enter-y">
+      <!-- {{deviceListData}} -->
       <YgList
         v-if="deviceListData.length > 0"
+        class="!md:mr-4"
         @my-click="sensorsNum"
         @fieldsClick="fieldsClick"
         :fieldsList="fieldsListData"
         :deviceList="deviceListData"
-      ></YgList>
-    </div>
-    <div class="md:w-2/5 w-full">
+      ></YgList> 
       <YgChart
         v-if="deviceListData.length > 0"
         class="mt-4 md:mt-0 w-full"
@@ -22,9 +19,7 @@
         :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
       />
     </div>
-  </div>
-  <div class="md:flex">
-    <div class="md:w-3/5 w-full !md:mr-4">
+    <div class="w-full enter-y">
       <YgChartNow
         v-if="deviceListData.length > 0"
         class="!mt-4 enter-y"
@@ -33,24 +28,23 @@
         :deviceName="deviceListData[boxStatus]['deviceBusiness']['name']"
       />
     </div>
-    <div class="md:w-2/5 w-full md:mt-0 !mt-4">
-      <YgBox v-if="deviceListData.length > 0" :deviceList="todayMvData[boxStatus]"></YgBox>
-
-      <YgAlarm
-        v-if="alarmPageData && deviceListData.length"
-        class="md:mt-4 mt-4"
-        :alarmPage="alarmPageData"
-      >
-        <div :class="palyStatus ? 'audio-class' : 'audio-class audio-no'" @click="closeAudio(true)"
-          ><Icon icon="audio|svg" :size="25" /></div
-      ></YgAlarm>
-    </div>
   </div>
-  <Modal2 @register="register2" :consoleList="consoleList" @closeAudio="closeAudio" />
+  <div class="md:w-1/4 w-full md:mt-0 mt-4">
+    <YgBox v-if="deviceListData.length > 0" :deviceList="todayMvData[boxStatus]"></YgBox>
+    <YgAlarm
+      v-if="alarmPageData && deviceListData.length"
+      class="md:mt-4 mt-4"
+      :alarmPage="alarmPageData"
+    ></YgAlarm>
+    <!-- <YgAlarm class="md:mt-4 mt-4"></YgAlarm> -->
+    <YgRadar
+      v-if="deviceListData.length > 0"
+      class="md:mt-4 mt-4"
+      :deviceList="todayMvData[boxStatus]"
+    ></YgRadar>
+  </div>
 </template>
 <script lang="ts">
-  import { useModal } from '/@/components/Modal';
-  import Modal2 from './components/Modal2.vue';
   import { ref, defineComponent, onMounted, onUnmounted } from 'vue';
   import YgList from './components/yg_list.vue';
   import YgChart from './components/yg_chart.vue';
@@ -58,7 +52,6 @@
   import YgBox from './components/yg_box.vue';
   import YgAlarm from './components/yg_alarm.vue';
   import YgRadar from './components/yg_radar.vue';
-  import { Icon } from '/@/components/Icon';
 
   import {
     newHomeApi,
@@ -71,8 +64,6 @@
 
   export default defineComponent({
     components: {
-      Icon,
-      Modal2,
       YgList,
       YgChart,
       YgChartNow,
@@ -82,8 +73,6 @@
     },
 
     setup() {
-      const [register2, { openModal: openModal2 }] = useModal();
-
       let fieldsListData = ref([]);
       let todayMvData = ref([]);
       let realTimeListData = ref([]);
@@ -98,64 +87,11 @@
         limit: 9999,
       };
       let timestamp = ref(0);
-      let consoleList = ref();
-
-      let palyNum = ref(0);
-      let palyStatus = ref(false);
-
       async function fieldsClick(res) {
         const { code } = await msgFieldsUpdateApi(res);
         console.log(code, 'code__');
       }
-      function aduioPlay() {
-        // audioet audioPlayer: HTMLMediaElement
-        let audioPlayer = document.getElementById('audioMc') as HTMLMediaElement;
-        // const promise = audioPlayer.play();
-        // console.log(promise, 'promise_____');
-        // if (promise !== undefined) {
-        //   promise
-        //     .then((res) => {
-        //       console.log(res, 'res');
-        //       // 播放成功
-        //     })
-        //     .catch((error) => {
-        //       console.log(error, 'error');
-        //       // 提醒用户点击激活播放，并查看新订单
-        //     });
-        // }
-        if (palyNum.value == 0 && palyStatus.value) {
-          audioPlayer.load();
-          audioPlayer.play();
-          palyNum.value = palyNum.value + 1;
-          console.log(palyNum.value, 'palyNum.value');
-        }
-      }
 
-      function closeAudio(res) {
-        if (res) {
-          palyStatus.value = !palyStatus.value;
-          // console.log(palyStatus.value, "palyStatus")
-        } else {
-          let audioPlayer = document.getElementById('audioMc') as HTMLMediaElement;
-          const promise = audioPlayer.play();
-          if (promise !== undefined) {
-            promise
-              .then((res) => {
-                audioPlayer.pause();
-                palyNum.value = 0;
-                console.log(res, 'res');
-                // 播放成功
-              })
-              .catch((error) => {
-                palyNum.value = -1;
-
-                console.log(error, 'error');
-                // 提醒用户点击激活播放，并查看新订单
-              });
-          }
-        }
-        // audioPlayer.pause();
-      }
       async function sensorsNum(index: number) {
         boxStatus.value = index;
         let refreshData = {
@@ -173,29 +109,23 @@
           let refreshData = {
             deviceUniqueId: deviceListData.value[boxStatus.value]['deviceUniqueId'],
           };
-          const { console, realTimeList } = await newHomeRefrshApi(refreshData);
+          const { realTimeList } = await newHomeRefrshApi(refreshData);
           realTimeListData.value = realTimeList;
           timestamp.value = Number(new Date());
-          if (console) {
-            consoleList.value = console;
-            aduioPlay();
-            openModal2();
-          }
         }, 5000);
       }
       async function getHomeListApi() {
-        closeAudio(false);
         clearInterval(timerHome);
         timerHome = setInterval(async () => {
           const { todayMv, historyList, deviceList, realTimeList } = await newHomeApi();
-          const { list } = await newHomeAlarmListApi(pages);
+          const { page } = await newHomeAlarmListApi(pages);
 
           todayMvData.value = todayMv;
           historyListData.value = historyList;
           deviceListData.value = deviceList;
-          alarmPageData.value = list;
+          alarmPageData.value = page.list;
           realTimeListData.value = realTimeList;
-        }, 60000);
+        }, 300000);
       }
       onMounted(async () => {
         getHomeListApi();
@@ -223,15 +153,7 @@
         clearInterval(timer);
         clearInterval(timerHome);
       });
-
       return {
-        palyStatus,
-        palyNum,
-        closeAudio,
-        aduioPlay,
-        consoleList,
-        openModal2,
-        register2,
         fieldsClick,
         timestamp,
         boxStatus,
@@ -246,17 +168,3 @@
     },
   });
 </script>
-
-<style lang="less" scoped>
-  .audio-class {
-    position: absolute;
-    right: 5px;
-    top: 2px;
-    color: #37a1da;
-    z-index: 999;
-    cursor: pointer;
-  }
-  .audio-no {
-    color: #959595;
-  }
-</style>

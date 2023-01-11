@@ -12,9 +12,14 @@ enum Api {
   NEW_LIST_HISTORYLIST = '/msg/list/historyList',
   MSG_FIELDS_ALL = '/msg/fields/all',
   MSG_FIELDS_UPDATE = '/msg/fields/update',
+  MSG_NOT_SHOW= '/msg/notShow',
 }
 
 // Get personal center-basic settings
+// 设置报警
+export const msgNotShow = (params: any) => defHttp.get<any>({ url: Api.MSG_NOT_SHOW, params});
+
+
 // 获取要展示的字段
 export const msgFieldsAllApi = () => defHttp.get<getHomeModel>({ url: Api.MSG_FIELDS_ALL });
 
