@@ -15,9 +15,10 @@
   import YgHead from './components/yg_head.vue';
   import Modal1 from './index-first.vue';
   import Modal2 from './index-second.vue';
+  import Modal3 from './index-third.vue';
   
   export default defineComponent({
-    components: { YgHead, Modal1, Modal2 },
+    components: { YgHead, Modal1, Modal2, Modal3 },
     setup() {
       const currentModal = shallowRef<Nullable<ComponentOptions>>(Modal1);
 

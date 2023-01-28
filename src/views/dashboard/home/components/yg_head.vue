@@ -1,8 +1,9 @@
 <template>
   <div class="yg-header w-full mb-2 text-center">
     <div class="yg-header-left">
-      <a-button :class="{static: activeKey}" size="default" type="link" :size="size" @click="handleModel('Modal1')">首页</a-button>
-      <a-button :class="{static: (!activeKey)}" size="default" type="link" :size="size" @click="handleModel('Modal2')">列表</a-button>
+      <a-button :class="{static: activeKey === 'Modal1'}" size="default" type="link" @click="handleModel('Modal1')">首页</a-button>
+      <a-button :class="{static: activeKey === 'Modal2'}" size="default" type="link" @click="handleModel('Modal2')">列表</a-button>
+      <a-button :class="{static: activeKey === 'Modal3'}" size="default" type="link" @click="handleModel('Modal3')">矢量图</a-button>
     </div>
     <span class="yg-header-text">
       套管监测平台
@@ -26,13 +27,13 @@
     setup( _, { emit }) {
 
       const userStore = useUserStore();
-      let activeKey = ref(true);
+      let activeKey = ref("Modal1");
       //  login out
       function handleLoginOut() {
         userStore.confirmLoginOut();
       }
       function handleModel(res) {
-        activeKey.value = (res === 'Modal1')
+        activeKey.value = res
         emit('visiblechange', res);
       }
 

@@ -13,9 +13,14 @@ enum Api {
   MSG_FIELDS_ALL = '/msg/fields/all',
   MSG_FIELDS_UPDATE = '/msg/fields/update',
   MSG_NOT_SHOW= '/msg/notShow',
+  MSG_VECTOR='/msg/vector',
+
 }
 
 // Get personal center-basic settings
+// 获取矢量图
+export const msgVector = () => defHttp.get<any>({ url: Api.MSG_VECTOR});
+
 // 设置报警
 export const msgNotShow = (params: any) => defHttp.get<any>({ url: Api.MSG_NOT_SHOW, params});
 
