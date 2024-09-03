@@ -20,7 +20,8 @@
       <div
         ><a-button :type="switchTime ? 'primary' : 'default'" @click="timingStar">
           实时数据
-        </a-button></div
+        </a-button>
+        <a-button class="ml-2" @click="customHeader"> 导出 </a-button></div
       >
     </div>
     <div class="virtual-scroll-content">
@@ -31,6 +32,8 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, ref, Ref, computed, watch } from 'vue';
+  import { jsonToSheetXlsx } from '/@/components/Excel';
+
   import { basicProps } from './props';
   import { useECharts } from '/@/hooks/web/useECharts';
   import { Icon } from '/@/components/Icon';
@@ -74,6 +77,11 @@
       let switchTime: Ref<Boolean> = ref(true);
       let valueTime = ref();
 
+      let fieldsNameList: any[];
+
+      let fieldsName = ref({});
+      let xlsxName: string = '';
+
       // reactive
       const onRangeChange = (value: [Dayjs, Dayjs], dateString: [string, string]) => {
         console.log(value);
@@ -81,38 +89,58 @@
       };
 
       const onRangeOk = (value: [Dayjs, Dayjs]) => {
-        console.log('onOk: ', value);
+        console.log(value);
       };
 
       function timingStop() {
         switchTime.value = false;
 
         contex.emit('my-click', dataTimeObj, switchTime);
-        console.log('switchTime', switchTime.value);
       }
 
       function timingStar() {
         switchTime.value = true;
         valueTime.value = undefined;
         contex.emit('my-click', dataTimeObj, switchTime);
-        console.log('switchTime', switchTime.value);
+      }
+      function customHeader() {
+        let data: any[] = props.historyList;
+
+        jsonToSheetXlsx({
+          data,
+          header: fieldsName.value,
+          filename: xlsxName + '.xlsx',
+          json2sheetOpts: {
+            // 指定顺序
+            header: ['name', 'id'],
+          },
+        });
       }
 
       async function onRangeChart(resData, resDevice) {
-        console.log(resData, 'resData————————————————————————————');
-        let fieldsNameList = [];
-        let showNameList = [];
+        // let fieldsNameList = [];
+        let showNameList: Array<string> = new Array<string>();
+        fieldsNameList = [];
+
+        xlsxName = resDevice['name'];
 
         for (let index = 0; index < fieldsAll.value.length; index++) {
           const element = fieldsAll.value[index];
           if (element.state) {
-            showNameList.push(
+            fieldsName.value[element.fieldsName] =
               element.showName === '数值'
                 ? resDevice['isBoxVolt']
                   ? '电压(kV)'
                   : '电流（mA）'
-                : element.showName,
-            );
+                : element.showName;
+
+            showNameList[index] =
+              element.showName === '数值'
+                ? resDevice['isBoxVolt']
+                  ? '电压(kV)'
+                  : '电流（mA）'
+                : element.showName;
+
             fieldsNameList.push({
               data: resData.map((ele: any) => {
                 return ele[element.fieldsName];
@@ -127,9 +155,6 @@
             });
           }
         }
-        console.log(showNameList, ' ______________1');
-        console.log(fieldsNameList, '__________2');
-
         setOptions({
           title: {
             text: resDevice['name'],
@@ -170,7 +195,7 @@
             },
           },
           yAxis: {
-            name: resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
+            // name: resDevice['isBoxVolt'] ? '电压(kV)' : '电流（mA）',
             nameTextStyle: {
               color: '#3BDFFF',
             },
@@ -198,11 +223,21 @@
           },
           dataZoom: [
             {
-              type: 'slider',
-              show: true,
-              xAxisIndex: [0],
+              type: 'slider', //无滑动条内置缩放   type: 'slider', //缩放滑动条
+              show: true, //开启
+              xAxisIndex: [0], //X轴滑动
               start: 95,
               end: 100,
+              // height: 5,
+            },
+            {
+              type: 'slider', //无滑动条内置缩放   type: 'slider', //缩放滑动条
+              show: true, //开启
+              yAxisIndex: [0], //Y轴滑动
+              left: 0,
+              start: 0, //初始化时，滑动条宽度开始标度
+              end: 100, //初始化时，滑动条宽度结束标度
+              width: 25,
             },
           ],
           legend: {
@@ -228,7 +263,8 @@
       watch(
         timestamp,
         () => {
-          let fieldsNameList = [];
+          // let fieldsNameList = [];
+          fieldsNameList = [];
 
           for (let index = 0; index < fieldsAll.value.length; index++) {
             const element = fieldsAll.value[index];
@@ -259,6 +295,7 @@
       onMounted(() => {});
 
       return {
+        customHeader,
         valueTime,
         switchTime,
         timingStop,

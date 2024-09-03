@@ -1,13 +1,13 @@
 <template>
   <div
     class="md:flex flex-wrap box-lists"
-    :style="listHeight ? 'max-height: 350px;' : 'height: auto;'"
+    :style="listHeight ? 'max-height: 250px;' : 'height: auto;'"
   >
     <div
       :class="itemAction == index ? 'box-item box-item-action' : 'box-item'"
       v-for="(item, index) in deviceList"
       :key="index"
-      @click="itemListClick(item, index)"
+      @click="itemListClick(index)"
     >
       <Card
         size="small"
@@ -17,10 +17,9 @@
       >
         <div class="p-1.5 px-4 flex justify-between">
           <Tag color="#108ee9">设备</Tag>
-          <!-- <span class="conut-tx">{{ item.deviceBusiness.isBoxVolt }}</span> -->
           <span class="conut-tx">{{ item.deviceBusiness.name }}</span>
         </div>
-        <template v-for="(field) in fieldsAll">
+        <template v-for="field in fieldsAll">
           <div class="p-1.5 px-4 flex justify-between" v-if="field.state">
             <Tag color="#108ee9">{{
               field.showName === '数值'
@@ -36,34 +35,6 @@
             }}</span>
           </div>
         </template>
-        <!-- <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">设备</Tag>
-          <span class="conut-tx">{{ item.deviceBusiness.name }}</span>
-        </div>
-        <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">{{ item.deviceBusiness.isBoxVolt ? '电压/kV' : '电流/mA' }}</Tag>
-          <span class="conut-tx">{{ item.monitorValue == null ? '暂无' : item.monitorValue }}</span>
-        </div>
-        <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">相对电容量(%)</Tag>
-          <span class="conut-tx">{{
-            item.relativelyCap == null ? '暂无' : item.relativelyCap
-          }}</span>
-        </div>
-        <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">相对介损</Tag>
-          <span class="conut-tx">{{
-            item.relativelyLoss == null ? '暂无' : item.relativelyLoss
-          }}</span>
-        </div>
-        <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">电容量(pF)</Tag>
-          <span class="conut-tx">{{ item.cap == null ? '暂无' : item.cap }}</span>
-        </div>
-        <div class="p-1.5 px-4 flex justify-between">
-          <Tag color="#108ee9">介损</Tag>
-          <span class="conut-tx">{{ item.loss == null ? '暂无' : item.loss }}</span>
-        </div> -->
       </Card>
     </div>
   </div>
@@ -71,43 +42,33 @@
     ><span @click="autoHeight()">{{ listHeight ? '展开' : '收缩' }}</span></div
   >
 </template>
-<script lang="ts">
-  import { defineComponent, ref, computed } from 'vue';
+<script lang="ts" setup>
+  import { ref, computed } from 'vue';
 
-  import { CountTo } from '/@/components/CountTo/index';
+  // import { CountTo } from '/@/components/CountTo/index';
   import { Tag, Card } from 'ant-design-vue';
 
-  const props = {
-    deviceList: { type: null, default: [] },
-    fieldsListData: { type: null, default: [] },
-  };
+  const emit = defineEmits(['my-click']);
 
-  export default defineComponent({
-    components: { CountTo, Tag, Card },
-    emits: ['my-click'],
-    props,
-    setup(props, contex) {
-      let itemAction = ref(0);
-      let listHeight = ref(true);
-      const deviceList = computed(() => props.deviceList);
-      const fieldsAll = computed(() => props.fieldsListData);
-      // const fieldsAll = props.fieldsListData;
-
-      async function itemListClick(item: any, index) {
-        console.log(item);
-        contex.emit('my-click', index);
-        itemAction.value = index;
-      }
-      function autoHeight() {
-        listHeight.value = !listHeight.value;
-      }
-
-      return { fieldsAll, deviceList, itemAction, itemListClick, autoHeight, listHeight };
-    },
+  const props = defineProps({
+    deviceList: { type: Array as any, default: [] },
+    fieldsListData: { type: Array as any, default: [] },
   });
+
+  let itemAction = ref(0);
+  let listHeight = ref(true);
+  const deviceList = computed(() => props.deviceList);
+  const fieldsAll = computed(() => props.fieldsListData);
+
+  async function itemListClick(index) {
+    emit('my-click', index);
+    itemAction.value = index;
+  }
+  function autoHeight() {
+    listHeight.value = !listHeight.value;
+  }
 </script>
 <style lang="less" scoped>
-
   .list-expand {
     margin-top: 20px;
     text-align: center;
@@ -127,7 +88,7 @@
     }
   }
   .box-lists {
-    max-height: 350px;
+    // max-height: 350px;
     overflow: hidden;
     justify-content: center;
     .conut-tx {

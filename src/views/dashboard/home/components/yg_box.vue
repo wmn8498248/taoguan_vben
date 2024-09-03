@@ -1,4 +1,6 @@
 <template>
+   <!-- <div style="background-color: #fff;">
+    {{ deviceList }}</div> -->
   <div class="md:flex yg-box">
     <div class="md:w-1/2 w-full mr-2 yg-box-content">
       <!-- <Tag color="#55acee">传感器</Tag> -->

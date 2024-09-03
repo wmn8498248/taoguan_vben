@@ -4,7 +4,7 @@
       <YgHead @visiblechange="openTargetModal" />
     </div>
     <!-- mt-5 md:mt-10 -->
-    <div class="home-index-content enter-y p-2 md:p-4">
+    <div class="home-index-content enter-y ">
       <component :is="currentModal"></component>
     </div>
   </div>

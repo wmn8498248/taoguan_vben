@@ -3,6 +3,9 @@
     <div class="virtual-scroll-title">
       <Icon icon="total-sales|svg" :size="30" />
       <span>设备列表</span>
+      <a-button size="small" type="dashed" class="ml-2" preIcon="mdi:page-next-outline" @click="customHeader">
+        导出
+      </a-button>
       <a-select
         v-if="!userStatic"
         v-model:value="value"
@@ -74,6 +77,8 @@
   import { Tag, Divider, Select } from 'ant-design-vue';
   // import { useAppStore } from '/@/store/modules/app';
   import { useUserStore } from '/@/store/modules/user';
+  import { DownloadOutlined } from '@ant-design/icons-vue';
+  import { jsonToSheetXlsx } from '/@/components/Excel';
 
   const data: Recordable[] = (() => {
     const arr: Recordable[] = [];
@@ -99,6 +104,7 @@
       Icon,
       [Select.name]: Select,
       ASelectOption: Select.Option,
+      DownloadOutlined,
     },
     props,
     emits: ['my-click', 'fieldsClick'],
@@ -110,6 +116,7 @@
 
       let value = ref<any>(['name']);
       let optionsName = reactive({ name: '传感器名称' });
+      let fieldsName = reactive({ name: '传感器名称' });
 
       const userStatic = computed(() => {
         try {
@@ -121,8 +128,10 @@
 
       options.forEach((element: { state: boolean; fieldsName: string; showName: string }) => {
         optionsName[element.fieldsName] = element.showName;
-        if (element.state === true) {
+        if (element.state) {
+          fieldsName[element.fieldsName] = element.showName;
           value.value.push(element.fieldsName);
+          
         }
       });
 
@@ -157,7 +166,26 @@
         return numberTx;
       }
 
+      function customHeader() {
+        let data: any[] = [];
+        
+        for (let index = 0; index < props.deviceList.length; index++) {
+          data.push(props.deviceList[index])
+          data[index]['name'] = props.deviceList[index]['deviceBusiness']['name']
+        }
+        jsonToSheetXlsx({
+          data,
+          header: fieldsName,
+          filename: '设备列表.xlsx',
+          json2sheetOpts: {
+            // 指定顺序
+            header: ['name', 'id'],
+          },
+        });
+      }
+
       return {
+        customHeader,
         variationChange,
         userStatic,
         itemAction,

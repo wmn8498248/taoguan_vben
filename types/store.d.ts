@@ -37,7 +37,7 @@ export interface UserInfo {
   avatar: string;
   desc?: string;
   homePath?: string;
-  user: ?{
+  user: {
     username: string;
     userId: number;
   };

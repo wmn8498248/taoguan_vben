@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="w-full p-2 md:p-4">
     <CasingCard
       v-if="deviceListData.length > 0"
       class="enter-y"
@@ -21,9 +21,10 @@
   </div>
 </template>
 <script lang="ts">
-  import { ref, defineComponent, onMounted, onUnmounted } from 'vue';
+  import { ref, defineComponent, onMounted, onBeforeUnmount } from 'vue';
   import CasingCard from './components/yg_card.vue';
   import YgAverage from './components/yg_average.vue';
+  
   import {
     newListRefeshApi,
     newListHistoryRefeshApi,
@@ -61,7 +62,6 @@
 
           historyListData.value = historyList;
           // timestamp.value = Number(new Date());
-          // console.log(deviceListData.value[boxStatus.value], '__________________');
           childRef.value.onRangeChart(
             historyList,
             deviceListData.value[boxStatus.value]['deviceBusiness'],
@@ -176,7 +176,9 @@
         timedTask();
       });
 
-      onUnmounted(() => {
+      // onUnmounted(() => {
+      // });
+      onBeforeUnmount(() => {
         clearInterval(timerTwo);
       });
       return {

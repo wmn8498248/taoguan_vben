@@ -3,6 +3,7 @@
   <!-- :showCancelBtn="false"
     :showOkBtn="false" -->
   <BasicModal
+    :draggable="false"
     v-bind="$attrs"
     @cancel="closeAudio"
     @ok="setModal"
